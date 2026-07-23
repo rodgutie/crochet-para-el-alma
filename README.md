@@ -6,7 +6,7 @@ Phase 1 of the project: public site clone + auth foundation. See
 ## What's included in Phase 1
 
 - **Public site** — Home (hero carousel, founder bio, feature cards, value props,
-  CTA banner, podcast block, footer), Tienda/Clases/Blog/Contacto placeholders,
+  CTA banner, podcast block, footer), Clases/Blog/Contacto placeholders,
   Membresía (redirects to your third-party membership platform — edit the URL
   in `frontend/src/pages/Membresia.jsx`).
 - **Customer auth** — register/login with email + password, JWT-based, "Mi cuenta"
@@ -15,8 +15,18 @@ Phase 1 of the project: public site clone + auth foundation. See
   **Hero banner editor is fully working**: add, edit, delete, and show/hide
   carousel slides (image URL, headline, subtext, button text/link).
 - **Backend** — FastAPI + MongoDB (Motor), JWT auth, hero slides CRUD API.
-  Product/course/order collections are modeled in the spec but not yet built
-  (Phase 2+).
+
+## What's included in Phase 2
+
+- **Product CRUD** — `/admin/productos` now lets you add, edit, and delete
+  products of three types (physical, digital, course), each with type-specific
+  fields (stock for physical, a download link for digital, a placeholder note
+  for course — lesson management comes in Phase 3), multiple image URLs, price/
+  currency, and an active/hidden toggle.
+- **Public store** — `/tienda` now pulls real products from the API, with a
+  type filter. The "Comprar" button is disabled with a tooltip explaining
+  checkout activates in Phase 4 (once KelvIQ is wired in) — this is intentional,
+  not a bug.
 
 ## Photos
 
@@ -57,8 +67,8 @@ Visit `http://localhost:5173` for the public site,
 
 | Phase | Status |
 |---|---|
-| 1 — Foundation (this drop) | ✅ Public site skeleton, auth, hero editor |
-| 2 — Admin dashboard core (product CRUD) | Not started |
+| 1 — Foundation | ✅ Public site skeleton, auth, hero editor |
+| 2 — Admin dashboard core (product CRUD) | ✅ Product CRUD (physical/digital/course), public store page |
 | 3 — Course system (lessons, HLS video streaming) | Not started |
 | 4 — Store & checkout (KelvIQ integration) | Not started |
 | 5 — Polish (digital delivery, emails) | Not started |

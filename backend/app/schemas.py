@@ -44,3 +44,29 @@ class HeroSlideIn(BaseModel):
 
 class HeroSlideOut(HeroSlideIn):
     id: str
+
+
+# ---------- Products ----------
+
+ProductType = Literal["physical", "digital", "course"]
+
+
+class ProductIn(BaseModel):
+    type: ProductType
+    name: str
+    description: Optional[str] = ""
+    price: float = Field(ge=0)
+    currency: str = "USD"
+    images: list[str] = []
+    active: bool = True
+    # Physical-only
+    stock: Optional[int] = None
+    # Digital-only (Phase 2: single downloadable file link; multi-file comes later if needed)
+    digital_file_url: Optional[str] = None
+    # Course-only: lessons are managed separately in Phase 3; this just
+    # reserves the product as a course container for now.
+
+
+class ProductOut(ProductIn):
+    id: str
+    created_at: datetime

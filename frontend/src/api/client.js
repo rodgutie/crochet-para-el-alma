@@ -42,4 +42,11 @@ export const api = {
   createHeroSlide: (data) => apiRequest('/api/hero', { method: 'POST', body: data, auth: true }),
   updateHeroSlide: (id, data) => apiRequest(`/api/hero/${id}`, { method: 'PUT', body: data, auth: true }),
   deleteHeroSlide: (id) => apiRequest(`/api/hero/${id}`, { method: 'DELETE', auth: true }),
+
+  products: () => apiRequest('/api/products'),
+  product: (id) => apiRequest(`/api/products/${id}`),
+  productsAdmin: () => apiRequest('/api/products/admin/all', { auth: true }),
+  createProduct: (data) => apiRequest('/api/products', { method: 'POST', body: data, auth: true }),
+  updateProduct: (id, data) => apiRequest(`/api/products/${id}`, { method: 'PUT', body: data, auth: true }),
+  deleteProduct: (id) => apiRequest(`/api/products/${id}`, { method: 'DELETE', auth: true }),
 }

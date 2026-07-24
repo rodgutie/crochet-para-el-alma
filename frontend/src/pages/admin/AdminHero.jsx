@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
+import MediaUpload from '../../components/MediaUpload'
 
 const EMPTY_SLIDE = {
   order: 0,
@@ -162,19 +163,16 @@ function SlideEditorModal({ slide, onCancel, onSave }) {
         <h2 style={{ fontSize: '1.2rem' }}>{slide.id ? 'Editar imagen' : 'Nueva imagen del banner'}</h2>
 
         <div style={{ marginTop: 20, display: 'grid', gap: 12 }}>
-          <label style={labelStyle}>
-            URL de la imagen
-            <input
-              type="text"
+          <div style={labelStyle}>
+            Imagen del banner
+            <MediaUpload
               value={form.image_url}
-              onChange={(e) => update('image_url', e.target.value)}
-              placeholder="https://…"
-              style={inputStyle}
+              onChange={(url) => update('image_url', url)}
+              folder="hero"
+              label="Subir imagen"
+              previewHeight={110}
             />
-            <span style={{ fontSize: '0.78rem', opacity: 0.7 }}>
-              Subida de archivos directa se agrega junto con las fotos reales.
-            </span>
-          </label>
+          </div>
 
           <label style={labelStyle}>
             Texto principal

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { api } from '../../api/client'
+import MediaUpload from '../../components/MediaUpload'
 
 const EMPTY_PRODUCT = {
   type: 'physical',
@@ -20,6 +22,7 @@ const TYPE_LABELS = {
 }
 
 export default function AdminProducts() {
+  const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [editing, setEditing] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -171,6 +174,15 @@ export default function AdminProducts() {
               </div>
 
               <div style={{ display: 'flex', gap: 8 }}>
+                {product.type === 'course' && (
+                  <button
+                    onClick={() => navigate(`/admin/cursos/${product.id}/lecciones`)}
+                    className="btn-outline"
+                    style={{ padding: '8px 16px', fontSize: '0.85rem' }}
+                  >
+                    Lecciones
+                  </button>
+                )}
                 <button onClick={() => setEditing(product)} className="btn-outline" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
                   Editar
                 </button>
@@ -297,44 +309,48 @@ function ProductEditorModal({ product, onCancel, onSave }) {
           )}
 
           {form.type === 'digital' && (
-            <label style={labelStyle}>
-              Enlace de descarga (PDF, patrón, etc.)
-              <input
-                type="text"
+            <div style={labelStyle}>
+              Archivo descargable (PDF, patrón, etc.)
+              <MediaUpload
                 value={form.digital_file_url || ''}
-                onChange={(e) => update('digital_file_url', e.target.value)}
-                placeholder="https://…"
-                style={inputStyle}
+                onChange={(url) => update('digital_file_url', url)}
+                folder="digital"
+                accept=".pdf,.zip,.rar,.doc,.docx"
+                label="Subir archivo"
               />
               <span style={{ fontSize: '0.78rem', opacity: 0.7 }}>
-                Subida directa de archivos y entrega automática tras la compra se agregan en la Fase 4/5.
+                Entrega automática tras la compra se activa en la Fase 4/5.
               </span>
-            </label>
+            </div>
           )}
 
           {form.type === 'course' && (
             <p style={{ fontSize: '0.85rem', background: 'var(--cream-deep)', padding: 12, borderRadius: 8 }}>
-              Este producto se crea como contenedor del curso. La gestión de lecciones, videos y
-              materiales se agrega en la Fase 3.
+              Guarda el curso primero y luego usa el botón <strong>Lecciones</strong> en la lista
+              para agregar y ordenar las lecciones.
             </p>
           )}
 
           <div>
-            <p style={labelStyle}>Imágenes (URLs)</p>
-            {form.images.map((img, i) => (
-              <input
-                key={i}
-                type="text"
-                value={img}
-                onChange={(e) => updateImage(i, e.target.value)}
-                placeholder="https://…"
-                style={{ ...inputStyle, marginBottom: 8 }}
-              />
-            ))}
+            <p style={labelStyle}>Imágenes del producto</p>
+            <div style={{ display: 'grid', gap: 16 }}>
+              {form.images.map((img, i) => (
+                <div key={i} style={{ padding: 12, background: 'var(--cream-deep)', borderRadius: 10 }}>
+                  <p style={{ fontSize: '0.78rem', opacity: 0.6, marginBottom: 8 }}>Imagen {i + 1}</p>
+                  <MediaUpload
+                    value={img}
+                    onChange={(url) => updateImage(i, url)}
+                    folder="products"
+                    label="Subir imagen"
+                    previewHeight={100}
+                  />
+                </div>
+              ))}
+            </div>
             <button
               type="button"
               onClick={addImageField}
-              style={{ background: 'none', border: 'none', color: 'var(--clay-deep)', fontSize: '0.85rem', padding: 0 }}
+              style={{ marginTop: 10, background: 'none', border: 'none', color: 'var(--clay-deep)', fontSize: '0.85rem', padding: 0 }}
             >
               + Agregar otra imagen
             </button>

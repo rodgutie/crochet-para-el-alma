@@ -6,7 +6,7 @@ from bson import ObjectId
 from app.database import users_collection
 from app.schemas import UserRegister, UserLogin, TokenOut, UserOut
 from app.security import hash_password, verify_password, create_access_token
-from app.deps import get_current_user
+from app.deps import get_current_user, require_admin
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -54,3 +54,10 @@ async def login(payload: UserLogin):
 @router.get("/me", response_model=UserOut)
 async def me(current_user: dict = Depends(get_current_user)):
     return _user_doc_to_out(current_user)
+
+
+@router.get("/admin/users", response_model=list[UserOut], dependencies=[Depends(require_admin)])
+async def list_users():
+    """Admin: list all customer accounts (for the entitlement grant form)."""
+    cursor = users_collection.find({"role": "customer"}).sort("created_at", -1)
+    return [_user_doc_to_out(doc) async for doc in cursor]

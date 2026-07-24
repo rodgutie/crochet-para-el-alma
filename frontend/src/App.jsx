@@ -19,6 +19,9 @@ import AdminLogin from './pages/admin/AdminLogin'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminHero from './pages/admin/AdminHero'
 import AdminProducts from './pages/admin/AdminProducts'
+import AdminLessons from './pages/admin/AdminLessons'
+import AdminEntitlements from './pages/admin/AdminEntitlements'
+import CoursePlayer from './pages/CoursePlayer'
 
 function PublicLayout({ children }) {
   return (
@@ -46,6 +49,8 @@ export default function App() {
         >
           <Route path="hero" element={<AdminHero />} />
           <Route path="productos" element={<AdminProducts />} />
+          <Route path="cursos/:productId/lecciones" element={<AdminLessons />} />
+          <Route path="accesos" element={<AdminEntitlements />} />
         </Route>
 
         {/* Public site */}
@@ -65,6 +70,14 @@ export default function App() {
                 <MiCuenta />
               </RequireCustomer>
             </PublicLayout>
+          }
+        />
+        <Route
+          path="/mi-cuenta/cursos/:id"
+          element={
+            <RequireCustomer>
+              <CoursePlayer />
+            </RequireCustomer>
           }
         />
       </Routes>

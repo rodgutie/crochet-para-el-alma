@@ -6,7 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import users_collection, hero_slides_collection
 from app.security import hash_password
-from app.routers import auth, hero, products
+from app.routers import auth, hero, products, lessons, media
+from app.routers import entitlements
 
 app = FastAPI(title="Crochet para el Alma API", version="0.1.0")
 
@@ -21,6 +22,10 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(hero.router)
 app.include_router(products.router)
+app.include_router(lessons.router)
+app.include_router(media.router)
+app.include_router(entitlements.router)
+app.include_router(entitlements.me_router)
 
 
 @app.on_event("startup")

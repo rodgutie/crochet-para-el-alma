@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 // Membership is handled by a third-party platform. This page redirects
 // out rather than hosting membership content/checkout itself.
-const MEMBERSHIP_EXTERNAL_URL = 'https://example.com/membresia'
+const MEMBERSHIP_EXTERNAL_URL = 'https://klouser.app/group/7386/p/46265'
 
 export default function Membresia() {
   useEffect(() => {

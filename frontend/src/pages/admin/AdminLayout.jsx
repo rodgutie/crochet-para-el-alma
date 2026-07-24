@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext'
 const LINKS = [
   { to: '/admin/hero', label: 'Banner principal' },
   { to: '/admin/productos', label: 'Productos' },
+  { to: '/admin/accesos', label: 'Accesos' },
 ]
 
 export default function AdminLayout() {

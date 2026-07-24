@@ -70,3 +70,55 @@ class ProductIn(BaseModel):
 class ProductOut(ProductIn):
     id: str
     created_at: datetime
+
+
+# ---------- Course lessons ----------
+
+class CourseLessonIn(BaseModel):
+    order: int = 0
+    title: str
+    video_key: Optional[str] = None       # internal R2 object key, never a public URL
+    attachments: list[str] = []           # R2 keys or URLs for PDFs / supplementary files
+    duration_seconds: Optional[int] = None
+
+
+class CourseLessonOut(CourseLessonIn):
+    id: str
+    product_id: str
+    created_at: datetime
+    video_status: Literal["none", "processing", "ready", "error"] = "none"
+
+
+class ReorderIn(BaseModel):
+    ordered_ids: list[str]
+
+
+# ---------- Entitlements ----------
+
+class EntitlementGrantIn(BaseModel):
+    user_id: str
+    product_id: str
+
+
+class EntitlementOut(BaseModel):
+    id: str
+    user_id: str
+    product_id: str
+    order_id: Optional[str] = None
+    granted_at: datetime
+    # Denormalized display fields — populated by the admin list endpoint
+    user_email: Optional[str] = None
+    user_name: Optional[str] = None
+    product_name: Optional[str] = None
+
+
+class MyEntitlementOut(BaseModel):
+    """Customer-facing view of their own entitlements, with product info."""
+    id: str
+    product_id: str
+    order_id: Optional[str] = None
+    granted_at: datetime
+    product_name: str = ""
+    product_type: str = ""
+    product_images: list[str] = []
+    product_description: str = ""

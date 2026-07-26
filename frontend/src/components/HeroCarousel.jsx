@@ -1,6 +1,19 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 
+const kenBurnsStyle = `
+@keyframes kenBurns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+`
+
+const FOCAL_POSITION = {
+  top: 'center top',
+  center: 'center center',
+  bottom: 'center bottom',
+}
+
 /**
  * Full-bleed hero carousel, driven entirely by the /api/hero slides
  * the admin dashboard manages. Falls back to a friendly empty state
@@ -47,6 +60,7 @@ export default function HeroCarousel({ slides = [] }) {
   }
 
   const slide = slides[index]
+  const objectPosition = FOCAL_POSITION[slide.focal_point] || 'center center'
 
   return (
     <section
@@ -60,7 +74,9 @@ export default function HeroCarousel({ slides = [] }) {
         backgroundColor: 'var(--espresso)',
       }}
     >
+      <style>{kenBurnsStyle}</style>
       <img
+        key={`hero-img-${index}`}
         src={slide.image_url}
         alt=""
         style={{
@@ -69,7 +85,10 @@ export default function HeroCarousel({ slides = [] }) {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
+          objectPosition,
           opacity: 0.85,
+          animation: 'kenBurns 9s ease-in-out forwards',
+          transformOrigin: objectPosition,
         }}
       />
       <div

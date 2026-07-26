@@ -10,6 +10,7 @@ const EMPTY_SLIDE = {
   cta_text: '',
   cta_link: '',
   active: true,
+  focal_point: 'center',
 }
 
 export default function AdminHero() {
@@ -173,6 +174,19 @@ function SlideEditorModal({ slide, onCancel, onSave }) {
               previewHeight={110}
             />
           </div>
+
+          <label style={labelStyle}>
+            Posición de la imagen
+            <select
+              value={form.focal_point || 'center'}
+              onChange={(e) => update('focal_point', e.target.value)}
+              style={{ ...inputStyle, cursor: 'pointer' }}
+            >
+              <option value="top">Arriba</option>
+              <option value="center">Centro</option>
+              <option value="bottom">Abajo</option>
+            </select>
+          </label>
 
           <label style={labelStyle}>
             Texto principal

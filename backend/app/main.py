@@ -8,6 +8,7 @@ from app.database import users_collection, hero_slides_collection
 from app.security import hash_password
 from app.routers import auth, hero, products, lessons, media
 from app.routers import entitlements
+from app.routers.media import images_router
 
 app = FastAPI(title="Crochet para el Alma API", version="0.1.0")
 
@@ -24,6 +25,7 @@ app.include_router(hero.router)
 app.include_router(products.router)
 app.include_router(lessons.router)
 app.include_router(media.router)
+app.include_router(images_router)
 app.include_router(entitlements.router)
 app.include_router(entitlements.me_router)
 

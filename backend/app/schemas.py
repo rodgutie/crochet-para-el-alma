@@ -40,6 +40,7 @@ class HeroSlideIn(BaseModel):
     cta_text: Optional[str] = ""
     cta_link: Optional[str] = ""
     active: bool = True
+    focal_point: Literal["top", "center", "bottom"] = "center"
 
 
 class HeroSlideOut(HeroSlideIn):

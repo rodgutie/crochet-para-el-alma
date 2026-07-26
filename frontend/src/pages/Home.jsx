@@ -19,8 +19,8 @@ export default function Home() {
       {/* Founder bio */}
       <section className="section">
         <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }}>
-          <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', minHeight: 380, background: 'var(--cream-deep)' }}>
-            <PlaceholderImage label="Foto de Mónica" />
+          <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', minHeight: 380 }}>
+            <img src="/images/cpa-4.jpg" alt="Mónica" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           </div>
           <div>
             <p className="eyebrow">Hola, soy Mónica</p>
@@ -45,14 +45,14 @@ export default function Home() {
       <section className="section section-alt">
         <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
           <FeatureCard
-            label="Foto de la tienda"
+            imageSrc="/images/cpa-10.jpg"
             title="Tienda y cursos online"
             description="Descubre piezas únicas tejidas por mí y cursos online para seguir aprendiendo crochet desde donde estés, a tu propio ritmo."
             linkTo="/tienda"
             linkLabel="Explora la tienda →"
           />
           <FeatureCard
-            label="Foto de clases"
+            imageSrc="/images/cpa-6.jpg"
             title="Clases presenciales y virtuales"
             description="Aprende conmigo en clases grupales presenciales o sesiones virtuales personalizadas. Juntas encontraremos la opción que mejor se adapte a tu nivel y objetivos."
             linkTo="/clases"
@@ -145,11 +145,11 @@ export default function Home() {
   )
 }
 
-function FeatureCard({ label, title, description, linkTo, linkLabel }) {
+function FeatureCard({ imageSrc, title, description, linkTo, linkLabel }) {
   return (
     <div className="card" style={{ position: 'relative', minHeight: 340 }}>
       <div style={{ position: 'absolute', inset: 0 }}>
-        <PlaceholderImage label={label} dark />
+        <img src={imageSrc} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
       </div>
       <div
         style={{

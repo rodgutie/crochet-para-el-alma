@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { uploadMedia } from '../api/client'
+import { uploadMedia, uploadImage } from '../api/client'
 
 const IMAGE_EXTS = /\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i
 
@@ -28,13 +28,22 @@ export default function MediaUpload({
 
   const isImage = value && IMAGE_EXTS.test(value)
 
+  const isImageAccept = accept.startsWith('image')
+
   async function handleFile(e) {
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
     setUploadError('')
     try {
-      const { url } = await uploadMedia(file, folder)
+      let url
+      if (isImageAccept) {
+        // Images go to the public bucket — response is { url } directly
+        ;({ url } = await uploadImage(file, folder))
+      } else {
+        // Non-images go to the private bucket — response is { path, url }
+        ;({ url } = await uploadMedia(file, folder))
+      }
       onChange(url)
     } catch (err) {
       setUploadError(err.message)

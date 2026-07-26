@@ -93,6 +93,28 @@ export async function uploadMedia(file, folder = 'general') {
   return { path, url: `${API_URL}/api/media/${path}` }
 }
 
+// Upload an image to the public R2 images bucket.
+// Returns { url } — a direct public CDN URL (or proxy URL in local dev).
+export async function uploadImage(file, folder = 'products') {
+  const token = getToken()
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const res = await fetch(`${API_URL}/api/images/upload?folder=${encodeURIComponent(folder)}`, {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData,
+  })
+
+  if (!res.ok) {
+    let detail = 'Upload failed'
+    try { detail = (await res.json()).detail || detail } catch (_) { /* no-op */ }
+    throw new Error(detail)
+  }
+
+  return res.json() // { url }
+}
+
 // Separate helper for video upload (multipart/form-data, not JSON)
 export async function uploadLessonVideo(productId, lessonId, file) {
   const token = getToken()

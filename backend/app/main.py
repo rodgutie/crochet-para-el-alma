@@ -1,3 +1,4 @@
+import shutil
 from datetime import datetime, timezone
 
 from fastapi import FastAPI
@@ -32,6 +33,8 @@ app.include_router(entitlements.me_router)
 
 @app.on_event("startup")
 async def bootstrap():
+    ffmpeg_path = shutil.which("ffmpeg")
+    print(f"[bootstrap] ffmpeg: {ffmpeg_path or 'NOT FOUND — video transcoding will fail'}")
     """Creates indexes and a first admin user/hero slides if the DB is empty.
     Safe to run every time the app starts."""
 

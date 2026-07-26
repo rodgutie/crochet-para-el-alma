@@ -62,6 +62,11 @@ export default function Navbar() {
               <Link to="/mi-cuenta" style={{ fontSize: '0.9rem' }}>
                 Hola, {user.name.split(' ')[0]}
               </Link>
+              {user.role === 'admin' && (
+                <Link to="/admin/hero" style={{ fontSize: '0.9rem' }}>
+                  Panel de administración
+                </Link>
+              )}
               <button
                 onClick={logout}
                 style={{ background: 'none', border: 'none', fontSize: '0.9rem', color: 'var(--text-body)' }}

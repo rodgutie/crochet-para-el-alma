@@ -17,7 +17,7 @@ const EMPTY_PRODUCT = {
 
 const TYPE_LABELS = {
   physical: 'Físico',
-  digital: 'Digital',
+  digital: 'Patrón',
   course: 'Curso',
 }
 
@@ -347,13 +347,17 @@ function ProductEditorModal({ product, onCancel, onSave }) {
                 </div>
               ))}
             </div>
-            <button
-              type="button"
-              onClick={addImageField}
-              style={{ marginTop: 10, background: 'none', border: 'none', color: 'var(--clay-deep)', fontSize: '0.85rem', padding: 0 }}
-            >
-              + Agregar otra imagen
-            </button>
+            {form.images.length < 5 ? (
+              <button
+                type="button"
+                onClick={addImageField}
+                style={{ marginTop: 10, background: 'none', border: 'none', color: 'var(--clay-deep)', fontSize: '0.85rem', padding: 0 }}
+              >
+                + Agregar otra imagen
+              </button>
+            ) : (
+              <p style={{ marginTop: 10, fontSize: '0.8rem', opacity: 0.6 }}>Máximo 5 imágenes</p>
+            )}
           </div>
 
           <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.9rem' }}>

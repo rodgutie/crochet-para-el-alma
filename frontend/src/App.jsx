@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { RequireCustomer, RequireAdmin } from './components/ProtectedRoute'
 
@@ -46,6 +46,7 @@ export default function App() {
             </RequireAdmin>
           }
         >
+          <Route index element={<Navigate to="/admin/hero" replace />} />
           <Route path="hero" element={<AdminHero />} />
           <Route path="productos" element={<AdminProducts />} />
           <Route path="cursos/:productId/lecciones" element={<AdminLessons />} />

@@ -3,7 +3,7 @@ import { api } from '../api/client'
 
 const TYPE_LABELS = {
   physical: 'Pieza física',
-  digital: 'Descargable',
+  digital: 'Patrón',
   course: 'Curso',
 }
 

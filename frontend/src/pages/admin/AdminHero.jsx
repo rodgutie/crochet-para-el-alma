@@ -173,6 +173,16 @@ function SlideEditorModal({ slide, onCancel, onSave }) {
               label="Subir imagen"
               previewHeight={110}
             />
+            <label style={{ ...labelStyle, marginTop: 6 }}>
+              URL de imagen (alternativa)
+              <input
+                type="text"
+                value={form.image_url}
+                onChange={(e) => update('image_url', e.target.value.trim())}
+                placeholder="/images/hero-1.jpeg o https://..."
+                style={inputStyle}
+              />
+            </label>
           </div>
 
           <label style={labelStyle}>

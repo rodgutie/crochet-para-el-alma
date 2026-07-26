@@ -48,17 +48,24 @@ async def bootstrap():
         })
         print(f"[bootstrap] Created first admin: {settings.first_admin_email}")
 
+    # Migrate: replace the old non-existent placeholder image with a real static file
+    await hero_slides_collection.update_many(
+        {"image_url": "/placeholder-hero-1.jpg"},
+        {"$set": {"image_url": "/images/hero-2.jpg"}},
+    )
+
     slide_count = await hero_slides_collection.count_documents({})
     if slide_count == 0:
         placeholder_slides = [
             {
                 "order": 0,
-                "image_url": "/placeholder-hero-1.jpg",
+                "image_url": "/images/hero-2.jpg",
                 "headline": "Aprende crochet, crea con intenci\u00f3n",
                 "subtext": "y encuentra un espacio para ti.",
                 "cta_text": "\u00danete a las clases gratuitas",
                 "cta_link": "/clases",
                 "active": True,
+                "focal_point": "center",
             },
         ]
         await hero_slides_collection.insert_many(placeholder_slides)

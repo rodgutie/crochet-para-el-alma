@@ -10,7 +10,6 @@ import Tienda from './pages/Tienda'
 import Clases from './pages/Clases'
 import Blog from './pages/Blog'
 import Contacto from './pages/Contacto'
-import Membresia from './pages/Membresia'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import MiCuenta from './pages/MiCuenta'
@@ -59,7 +58,6 @@ export default function App() {
         <Route path="/clases" element={<PublicLayout><Clases /></PublicLayout>} />
         <Route path="/blog" element={<PublicLayout><Blog /></PublicLayout>} />
         <Route path="/contacto" element={<PublicLayout><Contacto /></PublicLayout>} />
-        <Route path="/membresia" element={<PublicLayout><Membresia /></PublicLayout>} />
         <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
         <Route path="/registro" element={<PublicLayout><Register /></PublicLayout>} />
         <Route

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import HeroCarousel from '../components/HeroCarousel'
 import { api } from '../api/client'
 
+const MEMBERSHIP_URL = 'https://klouser.app/group/7386/p/46265'
+
 export default function Home() {
   const [slides, setSlides] = useState([])
 
@@ -32,9 +34,9 @@ export default function Home() {
               a una comunidad de mujeres que, como yo, encontraron en el crochet una forma de desarrollar
               su creatividad, aprender constantemente y regalarse un momento para ellas.
             </p>
-            <Link to="/membresia" className="btn-primary" style={{ marginTop: 24, display: 'inline-block' }}>
+            <a href={MEMBERSHIP_URL} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ marginTop: 24, display: 'inline-block' }}>
               Conoce la membresía
-            </Link>
+            </a>
           </div>
         </div>
       </section>
@@ -80,9 +82,9 @@ export default function Home() {
               creatividad. Y lo mejor: formarás parte de una comunidad de mujeres que aprende,
               comparte y crece unida, una puntada a la vez.
             </p>
-            <Link to="/membresia" className="btn-primary" style={{ marginTop: 22, display: 'inline-block' }}>
+            <a href={MEMBERSHIP_URL} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ marginTop: 22, display: 'inline-block' }}>
               Quiero ser parte
-            </Link>
+            </a>
           </div>
           <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', minHeight: 300, background: 'var(--cream-deep)' }}>
             <PlaceholderImage label="Foto de comunidad" />

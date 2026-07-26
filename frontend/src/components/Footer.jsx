@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 
+const MEMBERSHIP_URL = 'https://klouser.app/group/7386/p/46265'
+
 export default function Footer() {
   return (
     <footer style={{ background: 'var(--espresso)', color: 'var(--parchment)', padding: '64px 0 24px' }}>
@@ -21,7 +23,7 @@ export default function Footer() {
           <p style={{ fontSize: '0.75rem', letterSpacing: '0.12em', opacity: 0.7, marginBottom: 14 }}>EXPLORA</p>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 10, fontSize: '0.9rem' }}>
             <li><Link to="/tienda">Tienda</Link></li>
-            <li><Link to="/membresia">Membresía</Link></li>
+            <li><a href={MEMBERSHIP_URL} target="_blank" rel="noopener noreferrer">Membresía</a></li>
             <li><Link to="/clases">Clases</Link></li>
             <li><Link to="/blog">Blog</Link></li>
           </ul>

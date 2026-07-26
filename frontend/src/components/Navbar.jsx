@@ -1,10 +1,11 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
+const MEMBERSHIP_URL = 'https://klouser.app/group/7386/p/46265'
+
 const NAV_LINKS = [
   { to: '/', label: 'Inicio' },
   { to: '/tienda', label: 'Tienda' },
-  { to: '/membresia', label: 'Membresía' },
   { to: '/clases', label: 'Clases' },
   { to: '/blog', label: 'Blog' },
   { to: '/contacto', label: 'Contacto' },
@@ -45,6 +46,14 @@ export default function Navbar() {
               {link.label}
             </NavLink>
           ))}
+          <a
+            href={MEMBERSHIP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: '0.9rem', color: 'var(--text-body)', fontWeight: 400 }}
+          >
+            Membresía
+          </a>
         </nav>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>

@@ -45,7 +45,7 @@ export default function Home() {
       <section className="section section-alt">
         <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
           <FeatureCard
-            imageSrc="/images/cpa-10.jpg"
+            imageSrc="/images/hero-1.jpeg"
             title="Tienda y cursos online"
             description="Descubre piezas únicas tejidas por mí y cursos online para seguir aprendiendo crochet desde donde estés, a tu propio ritmo."
             linkTo="/tienda"
@@ -86,8 +86,8 @@ export default function Home() {
               Quiero ser parte
             </a>
           </div>
-          <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', minHeight: 300, background: 'var(--cream-deep)' }}>
-            <PlaceholderImage label="Foto de comunidad" />
+          <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', minHeight: 300 }}>
+            <CommunityCarousel />
           </div>
         </div>
       </section>
@@ -177,6 +177,43 @@ function ValueProp({ icon, title, description }) {
       <div style={{ fontSize: '1.5rem', color: 'var(--clay)' }}>{icon}</div>
       <h3 style={{ fontSize: '1.2rem', marginTop: 14 }}>{title}</h3>
       <p style={{ marginTop: 8, fontSize: '0.92rem' }}>{description}</p>
+    </div>
+  )
+}
+
+const COMMUNITY_IMAGES = [
+  '/images/amiharry.jpeg',
+  '/images/amiabeja.jpeg',
+  '/images/amijirafa.jpeg',
+  '/images/amizelda.jpeg',
+]
+
+function CommunityCarousel() {
+  const [index, setIndex] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => setIndex((i) => (i + 1) % COMMUNITY_IMAGES.length), 4500)
+    return () => clearInterval(timer)
+  }, [])
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: 300, overflow: 'hidden' }}>
+      {COMMUNITY_IMAGES.map((src, i) => (
+        <img
+          key={src}
+          src={src}
+          alt=""
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: i === index ? 1 : 0,
+            transition: 'opacity 0.8s ease',
+          }}
+        />
+      ))}
     </div>
   )
 }

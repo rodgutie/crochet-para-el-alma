@@ -17,7 +17,7 @@ export default function AdminHero() {
   const [slides, setSlides] = useState([])
   const [editing, setEditing] = useState(null) // slide being edited, or null
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [loadError, setLoadError] = useState('')
 
   async function refresh() {
     setLoading(true)
@@ -25,7 +25,7 @@ export default function AdminHero() {
       const data = await api.heroSlidesAdmin()
       setSlides(data.sort((a, b) => a.order - b.order))
     } catch (err) {
-      setError(err.message)
+      setLoadError(err.message)
     } finally {
       setLoading(false)
     }
@@ -36,18 +36,13 @@ export default function AdminHero() {
   }, [])
 
   async function handleSave(slide) {
-    setError('')
-    try {
-      if (slide.id) {
-        await api.updateHeroSlide(slide.id, slide)
-      } else {
-        await api.createHeroSlide({ ...slide, order: slides.length })
-      }
-      setEditing(null)
-      refresh()
-    } catch (err) {
-      setError(err.message)
+    if (slide.id) {
+      await api.updateHeroSlide(slide.id, slide)
+    } else {
+      await api.createHeroSlide({ ...slide, order: slides.length })
     }
+    setEditing(null)
+    refresh()
   }
 
   async function handleDelete(id) {
@@ -56,7 +51,7 @@ export default function AdminHero() {
       await api.deleteHeroSlide(id)
       refresh()
     } catch (err) {
-      setError(err.message)
+      setLoadError(err.message)
     }
   }
 
@@ -72,7 +67,7 @@ export default function AdminHero() {
         </button>
       </div>
 
-      {error && <p style={{ color: '#b3261e', marginTop: 16 }}>{error}</p>}
+      {loadError && <p style={{ color: '#b3261e', marginTop: 16 }}>{loadError}</p>}
 
       {loading ? (
         <p style={{ marginTop: 24 }}>Cargando…</p>
@@ -143,9 +138,23 @@ export default function AdminHero() {
 
 function SlideEditorModal({ slide, onCancel, onSave }) {
   const [form, setForm] = useState(slide)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }))
+  }
+
+  async function handleSubmit() {
+    setSaveError('')
+    setSaving(true)
+    try {
+      await onSave(form)
+    } catch (err) {
+      setSaveError(err.message)
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -224,9 +233,15 @@ function SlideEditorModal({ slide, onCancel, onSave }) {
           </label>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 26 }}>
-          <button onClick={onCancel} className="btn-outline">Cancelar</button>
-          <button onClick={() => onSave(form)} className="btn-primary">Guardar</button>
+        {saveError && (
+          <p style={{ color: '#b3261e', fontSize: '0.85rem', marginTop: 16 }}>{saveError}</p>
+        )}
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 16 }}>
+          <button onClick={onCancel} className="btn-outline" disabled={saving}>Cancelar</button>
+          <button onClick={handleSubmit} className="btn-primary" disabled={saving}>
+            {saving ? 'Guardando…' : 'Guardar'}
+          </button>
         </div>
       </div>
     </div>

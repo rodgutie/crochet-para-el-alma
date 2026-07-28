@@ -18,7 +18,7 @@ export default function Home() {
 
       {/* Founder bio */}
       <section className="section">
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }}>
+        <div className="container grid-halves">
           <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', minHeight: 380 }}>
             <img src="/images/cpa-4.jpg" alt="Mónica" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           </div>
@@ -43,7 +43,7 @@ export default function Home() {
 
       {/* Two feature cards */}
       <section className="section section-alt">
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+        <div className="container grid-halves-tight">
           <FeatureCard
             imageSrc="/images/hero-1.jpeg"
             title="Tienda y cursos online"
@@ -60,10 +60,7 @@ export default function Home() {
           />
         </div>
 
-        <div
-          className="container"
-          style={{ marginTop: 64, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 40 }}
-        >
+        <div className="container grid-thirds" style={{ marginTop: 64 }}>
           <ValueProp icon="🌿" title="Aprende sin miedo" description="Descubre nuevas técnicas paso a paso y gana la confianza para crear proyectos que antes parecían imposibles." />
           <ValueProp icon="♡" title="Nunca tejas sola" description="Aquí siempre encontrarás una comunidad que te acompaña, te inspira y celebra contigo cada avance." />
           <ValueProp icon="✧" title="Disfruta el proceso" description="Más que terminar un proyecto, descubrirás el placer de crear con tus manos y dedicarte un momento para ti." />
@@ -72,7 +69,7 @@ export default function Home() {
 
       {/* CTA banner */}
       <section className="section">
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center' }}>
+        <div className="container grid-halves">
           <div>
             <h2 style={{ fontSize: '1.75rem' }}>
               Un lugar al que siempre querrás volver para seguir creando.

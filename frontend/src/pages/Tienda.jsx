@@ -53,7 +53,7 @@ export default function Tienda() {
         ))}
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginTop: 28 }}>
+      <div className="filter-pills">
         {['all', 'physical', 'digital', 'course'].map((t) => (
           <button
             key={t}

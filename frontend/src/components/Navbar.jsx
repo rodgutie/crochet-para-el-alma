@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -13,26 +14,21 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const { user, logout } = useAuth()
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  function closeMenu() {
+    setMenuOpen(false)
+  }
 
   return (
-    <header
-      style={{
-        borderBottom: '1px solid var(--border-soft)',
-        background: 'var(--cream)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 40,
-      }}
-    >
-      <div
-        className="container"
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 76 }}
-      >
-        <Link to="/" className="font-display" style={{ fontSize: '1.35rem', fontStyle: 'italic' }}>
+    <header className="site-header">
+      <div className="container nav-container">
+        <Link to="/" className="font-display nav-brand">
           Crochet <span style={{ fontStyle: 'normal' }}>para el Alma</span>
         </Link>
 
-        <nav style={{ display: 'flex', gap: 28 }} className="nav-links">
+        {/* Desktop nav — hidden below 768px via CSS */}
+        <nav className="nav-links">
           {NAV_LINKS.map((link) => (
             <NavLink
               key={link.to}
@@ -56,7 +52,8 @@ export default function Navbar() {
           </a>
         </nav>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+        {/* Desktop actions — hidden below 768px via CSS */}
+        <div className="nav-actions">
           {user ? (
             <>
               <Link to="/mi-cuenta" style={{ fontSize: '0.9rem' }}>
@@ -83,7 +80,69 @@ export default function Navbar() {
             🛍
           </Link>
         </div>
+
+        {/* Hamburger — visible below 768px via CSS */}
+        <button
+          className="nav-hamburger"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+          aria-expanded={menuOpen}
+        >
+          {menuOpen ? '✕' : '☰'}
+        </button>
       </div>
+
+      {/* Mobile slide-down menu */}
+      {menuOpen && (
+        <div className="nav-mobile-menu">
+          {NAV_LINKS.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              onClick={closeMenu}
+              style={({ isActive }) => ({
+                color: isActive ? 'var(--clay-deep)' : 'var(--text-body)',
+                fontWeight: isActive ? 500 : 400,
+              })}
+            >
+              {link.label}
+            </NavLink>
+          ))}
+          <a
+            href={MEMBERSHIP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={closeMenu}
+          >
+            Membresía
+          </a>
+          {user ? (
+            <>
+              <Link to="/mi-cuenta" onClick={closeMenu}>
+                Hola, {user.name.split(' ')[0]}
+              </Link>
+              {user.role === 'admin' && (
+                <Link to="/admin/hero" onClick={closeMenu}>
+                  Panel de administración
+                </Link>
+              )}
+              <button
+                className="nav-mobile-btn"
+                onClick={() => { logout(); closeMenu() }}
+              >
+                Salir
+              </button>
+            </>
+          ) : (
+            <Link to="/login" onClick={closeMenu}>
+              Entrar
+            </Link>
+          )}
+          <Link to="/tienda" onClick={closeMenu}>
+            🛍 Carrito
+          </Link>
+        </div>
+      )}
     </header>
   )
 }

@@ -17,21 +17,12 @@ export default function AdminLayout() {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <aside
-        style={{
-          width: 240,
-          background: 'var(--espresso)',
-          color: 'var(--parchment)',
-          padding: '32px 20px',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <p className="font-display" style={{ color: 'var(--parchment)', fontSize: '1.15rem', marginBottom: 32 }}>
+    <div className="admin-layout">
+      <aside className="admin-sidebar">
+        <p className="font-display admin-sidebar-title">
           Panel · Crochet para el Alma
         </p>
-        <nav style={{ display: 'grid', gap: 4 }}>
+        <nav className="admin-sidebar-nav">
           {LINKS.map((link) => (
             <NavLink
               key={link.to}
@@ -49,18 +40,15 @@ export default function AdminLayout() {
           ))}
         </nav>
 
-        <div style={{ marginTop: 'auto', fontSize: '0.85rem', opacity: 0.75 }}>
+        <div className="admin-sidebar-footer">
           <p>{user?.email}</p>
-          <button
-            onClick={handleLogout}
-            style={{ background: 'none', border: 'none', color: 'var(--parchment)', padding: 0, marginTop: 8, textDecoration: 'underline' }}
-          >
+          <button onClick={handleLogout} className="admin-logout-btn">
             Cerrar sesión
           </button>
         </div>
       </aside>
 
-      <main style={{ flex: 1, background: 'var(--cream)', padding: 40 }}>
+      <main className="admin-main">
         <Outlet />
       </main>
     </div>

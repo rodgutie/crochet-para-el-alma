@@ -124,12 +124,227 @@ button {
   border: 1px solid var(--border-soft);
 }
 
+/* =============================================
+   Navbar
+   ============================================= */
+.site-header {
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--cream);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 76px;
+}
+
+.nav-brand {
+  font-size: 1.35rem;
+  font-style: italic;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-body);
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.nav-mobile-menu {
+  border-top: 1px solid var(--border-soft);
+  background: var(--cream);
+  padding: 4px 20px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-mobile-menu a,
+.nav-mobile-btn {
+  display: block;
+  padding: 12px 0;
+  font-size: 0.95rem;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text-body);
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+  font-family: var(--font-body);
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.nav-mobile-menu a:last-child {
+  border-bottom: none;
+}
+
+/* =============================================
+   Home page responsive grids
+   ============================================= */
+.grid-halves {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+
+.grid-halves-tight {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.grid-thirds {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+/* =============================================
+   Tienda filter pills
+   ============================================= */
+.filter-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+/* =============================================
+   Admin layout
+   ============================================= */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  width: 240px;
+  background: var(--espresso);
+  color: var(--parchment);
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.admin-sidebar-title {
+  color: var(--parchment);
+  font-size: 1.15rem;
+  margin-bottom: 32px;
+}
+
+.admin-sidebar-nav {
+  display: grid;
+  gap: 4px;
+}
+
+.admin-sidebar-footer {
+  margin-top: auto;
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.admin-logout-btn {
+  background: none;
+  border: none;
+  color: var(--parchment);
+  padding: 0;
+  margin-top: 8px;
+  text-decoration: underline;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.admin-main {
+  flex: 1;
+  background: var(--cream);
+  padding: 40px;
+  min-width: 0;
+}
+
+/* =============================================
+   Breakpoint: tablet/desktop transition
+   ============================================= */
 @media (max-width: 860px) {
   .section {
     padding: 56px 0;
   }
   .container {
     padding: 0 20px;
+  }
+}
+
+/* =============================================
+   Breakpoint: mobile ≤ 768px
+   ============================================= */
+@media (max-width: 768px) {
+  /* Navbar */
+  .nav-links,
+  .nav-actions {
+    display: none;
+  }
+
+  .nav-hamburger {
+    display: block;
+  }
+
+  /* Home grids → single column */
+  .grid-halves,
+  .grid-halves-tight {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .grid-thirds {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  /* Admin layout → stacked */
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    padding: 16px 20px;
+  }
+
+  .admin-sidebar-title {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .admin-sidebar-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-main {
+    padding: 24px 16px;
   }
 }
 

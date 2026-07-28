@@ -87,7 +87,7 @@ export default function Home() {
             </a>
           </div>
           <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', minHeight: 300 }}>
-            <CommunityCarousel />
+            <img src="/images/amiharry.jpeg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           </div>
         </div>
       </section>
@@ -181,42 +181,6 @@ function ValueProp({ icon, title, description }) {
   )
 }
 
-const COMMUNITY_IMAGES = [
-  '/images/amiharry.jpeg',
-  '/images/amiabeja.jpeg',
-  '/images/amijirafa.jpeg',
-  '/images/amizelda.jpeg',
-]
-
-function CommunityCarousel() {
-  const [index, setIndex] = useState(0)
-
-  useEffect(() => {
-    const timer = setInterval(() => setIndex((i) => (i + 1) % COMMUNITY_IMAGES.length), 4500)
-    return () => clearInterval(timer)
-  }, [])
-
-  return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: 300, overflow: 'hidden' }}>
-      {COMMUNITY_IMAGES.map((src, i) => (
-        <img
-          key={src}
-          src={src}
-          alt=""
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            opacity: i === index ? 1 : 0,
-            transition: 'opacity 0.8s ease',
-          }}
-        />
-      ))}
-    </div>
-  )
-}
 
 /** Placeholder for real photos, which will be dropped in once handed over. */
 function PlaceholderImage({ label, dark = false }) {

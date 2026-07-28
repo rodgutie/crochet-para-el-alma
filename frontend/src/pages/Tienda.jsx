@@ -33,23 +33,23 @@ export default function Tienda() {
       </p>
 
       {/* Promotional banner — temporary placeholder while real products are added */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 12,
-          marginTop: 32,
-          borderRadius: 'var(--radius-card)',
-          overflow: 'hidden',
-        }}
-      >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 32 }}>
         {PROMO_IMAGES.map((src) => (
-          <img
+          <div
             key={src}
-            src={src}
-            alt=""
-            style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', display: 'block' }}
-          />
+            style={{
+              width: '100%',
+              height: 'clamp(320px, 55vh, 620px)',
+              borderRadius: 'var(--radius-card)',
+              overflow: 'hidden',
+            }}
+          >
+            <img
+              src={src}
+              alt=""
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          </div>
         ))}
       </div>
 

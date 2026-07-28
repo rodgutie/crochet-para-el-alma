@@ -16,8 +16,8 @@ const EMPTY_PRODUCT = {
 }
 
 const TYPE_LABELS = {
-  physical: 'Físico',
-  digital: 'Patrón',
+  physical: 'Hecho a Mano',
+  digital: 'Descargables',
   course: 'Curso',
 }
 

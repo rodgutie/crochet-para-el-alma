@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import { api } from '../api/client'
 
 const TYPE_LABELS = {
-  physical: 'Pieza física',
-  digital: 'Patrón',
+  physical: 'Hecho a Mano',
+  digital: 'Descargables',
   course: 'Curso',
 }
+
+const PROMO_IMAGES = ['/images/temp1.jpeg', '/images/temp2.jpeg', '/images/temp3.jpeg']
 
 export default function Tienda() {
   const [products, setProducts] = useState([])
@@ -29,6 +31,27 @@ export default function Tienda() {
       <p style={{ marginTop: 12, maxWidth: 560 }}>
         Piezas tejidas a mano, patrones descargables y cursos para seguir aprendiendo a tu ritmo.
       </p>
+
+      {/* Promotional banner — temporary placeholder while real products are added */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 12,
+          marginTop: 32,
+          borderRadius: 'var(--radius-card)',
+          overflow: 'hidden',
+        }}
+      >
+        {PROMO_IMAGES.map((src) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', display: 'block' }}
+          />
+        ))}
+      </div>
 
       <div style={{ display: 'flex', gap: 8, marginTop: 28 }}>
         {['all', 'physical', 'digital', 'course'].map((t) => (

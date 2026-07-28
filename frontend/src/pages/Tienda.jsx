@@ -39,15 +39,15 @@ export default function Tienda() {
             key={src}
             style={{
               width: '100%',
-              height: 'clamp(320px, 55vh, 620px)',
               borderRadius: 'var(--radius-card)',
               overflow: 'hidden',
+              background: 'var(--cream-deep)',
             }}
           >
             <img
               src={src}
               alt=""
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              style={{ display: 'block', width: '100%', height: 'auto' }}
             />
           </div>
         ))}

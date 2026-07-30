@@ -64,13 +64,11 @@ export default function HeroCarousel({ slides = [] }) {
 
   return (
     <section
+      className="hero-section"
       style={{
-        position: 'relative',
-        minHeight: 560,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        overflow: 'hidden',
         backgroundColor: 'var(--espresso)',
       }}
     >
@@ -81,7 +79,10 @@ export default function HeroCarousel({ slides = [] }) {
         alt=""
         style={{
           position: 'absolute',
-          inset: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
           width: '100%',
           height: '100%',
           objectFit: 'cover',
@@ -94,7 +95,10 @@ export default function HeroCarousel({ slides = [] }) {
       <div
         style={{
           position: 'absolute',
-          inset: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
           background: 'linear-gradient(180deg, rgba(43,29,20,0.15), rgba(43,29,20,0.45))',
         }}
       />
@@ -102,12 +106,12 @@ export default function HeroCarousel({ slides = [] }) {
       <div style={{ position: 'relative', textAlign: 'center', color: '#fff', padding: '0 24px', maxWidth: 780 }}>
         <h1
           className="font-display"
-          style={{ color: '#fff', fontSize: 'clamp(1.8rem, 4vw, 2.75rem)', lineHeight: 1.3 }}
+          style={{ color: '#fff', fontSize: 'clamp(1.35rem, 5vw, 2.75rem)', lineHeight: 1.3 }}
         >
           {slide.headline}
         </h1>
         {slide.subtext && (
-          <p style={{ color: 'rgba(255,255,255,0.9)', marginTop: 8, fontSize: '1.05rem' }}>{slide.subtext}</p>
+          <p style={{ color: 'rgba(255,255,255,0.9)', marginTop: 8, fontSize: 'clamp(0.85rem, 3vw, 1.05rem)' }}>{slide.subtext}</p>
         )}
         {slide.cta_text && (
           <Link to={slide.cta_link || '#'} className="btn-primary" style={{ marginTop: 26, display: 'inline-block' }}>

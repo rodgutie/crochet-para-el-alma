@@ -24,7 +24,7 @@ export default function Home() {
           </div>
           <div>
             <p className="eyebrow">Hola, soy Mónica</p>
-            <h2 style={{ fontSize: '2rem', marginTop: 10 }}>
+            <h2 style={{ fontSize: 'clamp(1.25rem, 5vw, 2rem)', marginTop: 10 }}>
               Descubrí el crochet de adulta. Hoy ayudo a otras mujeres a descubrir todo lo que son
               capaces de crear.
             </h2>
@@ -71,7 +71,7 @@ export default function Home() {
       <section className="section">
         <div className="container grid-halves">
           <div>
-            <h2 style={{ fontSize: '1.75rem' }}>
+            <h2 style={{ fontSize: 'clamp(1.15rem, 4.5vw, 1.75rem)' }}>
               Un lugar al que siempre querrás volver para seguir creando.
             </h2>
             <p style={{ marginTop: 16 }}>

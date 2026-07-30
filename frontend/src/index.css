@@ -125,6 +125,15 @@ button {
 }
 
 /* =============================================
+   Hero carousel
+   ============================================= */
+.hero-section {
+  position: relative;
+  overflow: hidden;
+  min-height: 560px;
+}
+
+/* =============================================
    Navbar
    ============================================= */
 .site-header {
@@ -308,6 +317,21 @@ button {
 
   .nav-hamburger {
     display: block;
+  }
+
+  /* Hero — reduce height and ensure overlay fills the section */
+  .hero-section {
+    min-height: 360px;
+  }
+
+  /* Tighter horizontal padding on phones */
+  .container {
+    padding: 0 16px;
+  }
+
+  /* Less vertical breathing room */
+  .section {
+    padding: 52px 0;
   }
 
   /* Home grids → single column */

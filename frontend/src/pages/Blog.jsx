@@ -1,20 +1,28 @@
 export default function Blog() {
   return (
-    <section className="section">
-      <div className="container grid-halves">
-        <div>
-          <p className="eyebrow">Blog</p>
-          <h1 style={{ fontSize: 'clamp(1.25rem, 5vw, 2rem)', marginTop: 8 }}>
-            Historias, técnicas y proyectos
-          </h1>
-        </div>
-        <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', minHeight: 300 }}>
-          <img
-            src="/images/blog.jpeg"
-            alt="Blog — Crochet para el Alma"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-          />
-        </div>
+    <section className="section container">
+      <p className="eyebrow">Blog</p>
+      <h1 style={{ fontSize: 'clamp(1.25rem, 5vw, 2rem)', marginTop: 8 }}>
+        Historias, técnicas y proyectos
+      </h1>
+      <p style={{ marginTop: 12, maxWidth: 640 }}>
+        Inspiración, tutoriales y reflexiones sobre el tejido y la vida creativa.
+      </p>
+
+      <div
+        style={{
+          marginTop: 32,
+          width: '100%',
+          borderRadius: 'var(--radius-card)',
+          overflow: 'hidden',
+          background: 'var(--cream-deep)',
+        }}
+      >
+        <img
+          src="/images/blog.jpeg"
+          alt="Blog — Crochet para el Alma"
+          style={{ display: 'block', width: '100%', height: 'auto' }}
+        />
       </div>
     </section>
   )

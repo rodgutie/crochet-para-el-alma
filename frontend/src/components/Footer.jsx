@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-const MEMBERSHIP_URL = 'https://klouser.app/group/7386/p/46265'
+const MEMBERSHIP_URL = 'https://klouser.app/group/crochet-para-el-alma'
 
 export default function Footer() {
   return (

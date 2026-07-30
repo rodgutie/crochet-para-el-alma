@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-const MEMBERSHIP_URL = 'https://klouser.app/group/7386/p/46265'
+const MEMBERSHIP_URL = 'https://klouser.app/group/crochet-para-el-alma'
 
 const NAV_LINKS = [
   { to: '/', label: 'Inicio' },

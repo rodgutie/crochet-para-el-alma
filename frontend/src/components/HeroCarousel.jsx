@@ -19,7 +19,7 @@ const FOCAL_POSITION = {
  * the admin dashboard manages. Falls back to a friendly empty state
  * if no slides exist yet (e.g. right after setup, before photos are added).
  */
-export default function HeroCarousel({ slides = [] }) {
+export default function HeroCarousel({ slides = [], loading = false }) {
   const [index, setIndex] = useState(0)
 
   const goTo = useCallback(
@@ -35,6 +35,15 @@ export default function HeroCarousel({ slides = [] }) {
     const timer = setInterval(() => goTo(index + 1), 6000)
     return () => clearInterval(timer)
   }, [index, slides.length, goTo])
+
+  if (loading) {
+    return (
+      <section
+        className="hero-section"
+        style={{ background: 'var(--espresso)' }}
+      />
+    )
+  }
 
   if (slides.length === 0) {
     return (

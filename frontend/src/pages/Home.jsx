@@ -3,18 +3,22 @@ import { Link } from 'react-router-dom'
 import HeroCarousel from '../components/HeroCarousel'
 import { api } from '../api/client'
 
-const MEMBERSHIP_URL = 'https://klouser.app/group/7386/p/46265'
+const MEMBERSHIP_URL = 'https://klouser.app/group/crochet-para-el-alma'
 
 export default function Home() {
   const [slides, setSlides] = useState([])
+  const [heroLoading, setHeroLoading] = useState(true)
 
   useEffect(() => {
-    api.heroSlides().then(setSlides).catch(() => setSlides([]))
+    api.heroSlides()
+      .then(setSlides)
+      .catch(() => setSlides([]))
+      .finally(() => setHeroLoading(false))
   }, [])
 
   return (
     <>
-      <HeroCarousel slides={slides} />
+      <HeroCarousel slides={slides} loading={heroLoading} />
 
       {/* Founder bio */}
       <section className="section">

@@ -19,13 +19,8 @@ const FOCAL_POSITION = {
  * the admin dashboard manages. Falls back to a friendly empty state
  * if no slides exist yet (e.g. right after setup, before photos are added).
  */
-export default function HeroCarousel({ slides = [], loading = false }) {
+export default function HeroCarousel({ slides = [] }) {
   const [index, setIndex] = useState(0)
-  const [imageLoaded, setImageLoaded] = useState(false)
-
-  useEffect(() => {
-    setImageLoaded(false)
-  }, [index])
 
   const goTo = useCallback(
     (i) => {
@@ -40,15 +35,6 @@ export default function HeroCarousel({ slides = [], loading = false }) {
     const timer = setInterval(() => goTo(index + 1), 6000)
     return () => clearInterval(timer)
   }, [index, slides.length, goTo])
-
-  if (loading) {
-    return (
-      <section
-        className="hero-section"
-        style={{ background: 'var(--espresso)' }}
-      />
-    )
-  }
 
   if (slides.length === 0) {
     return (
@@ -83,7 +69,7 @@ export default function HeroCarousel({ slides = [], loading = false }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'var(--espresso)',
+        backgroundColor: 'var(--cream)',
       }}
     >
       <style>{kenBurnsStyle}</style>
@@ -91,7 +77,6 @@ export default function HeroCarousel({ slides = [], loading = false }) {
         key={`hero-img-${index}`}
         src={slide.image_url}
         alt=""
-        onLoad={() => setImageLoaded(true)}
         style={{
           position: 'absolute',
           top: 0,
@@ -102,8 +87,7 @@ export default function HeroCarousel({ slides = [], loading = false }) {
           height: '100%',
           objectFit: 'cover',
           objectPosition,
-          opacity: imageLoaded ? 0.85 : 0,
-          transition: 'opacity 0.6s ease',
+          opacity: 0.85,
           animation: 'kenBurns 9s ease-in-out forwards',
           transformOrigin: objectPosition,
         }}

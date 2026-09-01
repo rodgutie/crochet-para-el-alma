@@ -7,18 +7,53 @@ const MEMBERSHIP_URL = 'https://klouser.app/group/crochet-para-el-alma'
 
 export default function Home() {
   const [slides, setSlides] = useState([])
-  const [heroLoading, setHeroLoading] = useState(true)
+  const [heroReady, setHeroReady] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
+
     api.heroSlides()
-      .then(setSlides)
-      .catch(() => setSlides([]))
-      .finally(() => setHeroLoading(false))
+      .then((data) => {
+        if (cancelled) return
+        setSlides(data)
+
+        const firstImage = data[0]?.image_url
+        if (!firstImage) {
+          setHeroReady(true)
+          return
+        }
+
+        let settled = false
+        const finish = () => {
+          if (settled || cancelled) return
+          settled = true
+          setHeroReady(true)
+        }
+
+        const img = new Image()
+        img.onload = finish
+        img.onerror = finish
+        img.src = firstImage
+        // A real (compressed) hero photo can take several seconds on a slow
+        // connection — this is only a safety net against a hung/broken
+        // request, not a normal-case budget, so it's generous on purpose.
+        setTimeout(finish, 8000)
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setSlides([])
+          setHeroReady(true)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   return (
     <>
-      <HeroCarousel slides={slides} loading={heroLoading} />
+      {heroReady ? <HeroCarousel slides={slides} /> : <div className="hero-section" />}
 
       {/* Founder bio */}
       <section className="section">

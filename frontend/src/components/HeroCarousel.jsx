@@ -21,6 +21,11 @@ const FOCAL_POSITION = {
  */
 export default function HeroCarousel({ slides = [], loading = false }) {
   const [index, setIndex] = useState(0)
+  const [imageLoaded, setImageLoaded] = useState(false)
+
+  useEffect(() => {
+    setImageLoaded(false)
+  }, [index])
 
   const goTo = useCallback(
     (i) => {
@@ -86,6 +91,7 @@ export default function HeroCarousel({ slides = [], loading = false }) {
         key={`hero-img-${index}`}
         src={slide.image_url}
         alt=""
+        onLoad={() => setImageLoaded(true)}
         style={{
           position: 'absolute',
           top: 0,
@@ -96,7 +102,8 @@ export default function HeroCarousel({ slides = [], loading = false }) {
           height: '100%',
           objectFit: 'cover',
           objectPosition,
-          opacity: 0.85,
+          opacity: imageLoaded ? 0.85 : 0,
+          transition: 'opacity 0.6s ease',
           animation: 'kenBurns 9s ease-in-out forwards',
           transformOrigin: objectPosition,
         }}

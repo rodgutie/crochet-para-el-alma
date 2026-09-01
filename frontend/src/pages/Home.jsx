@@ -172,7 +172,13 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <a href="#" className="btn-outline" style={{ borderColor: 'var(--parchment)', color: 'var(--parchment)', whiteSpace: 'nowrap' }}>
+          <a
+            href="https://open.spotify.com/show/7rKPRxw5kYglnqLAfsvEhD"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline"
+            style={{ borderColor: 'var(--parchment)', color: 'var(--parchment)', whiteSpace: 'nowrap' }}
+          >
             Escuchar
           </a>
         </div>

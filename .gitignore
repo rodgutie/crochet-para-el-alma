@@ -2,3 +2,10 @@ node_modules/
 dist/
 .env
 .claude/settings.local.json
+
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+.env

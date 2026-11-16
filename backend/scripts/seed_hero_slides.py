@@ -34,6 +34,7 @@ SLIDES = [
         "cta_link": "/tienda",
         "image_side": "right",
         "accent": "none",
+        "focal_x": "left",
     },
     {
         "order": 1,
@@ -62,7 +63,7 @@ SLIDES = [
 
 async def main(replace: bool) -> None:
     for slide in SLIDES:
-        doc = {**slide, "active": True, "focal_point": "center"}
+        doc = {"focal_point": "center", "focal_x": "center", **slide, "active": True}
         res = await hero_slides_collection.update_one(
             {"image_url": slide["image_url"]}, {"$set": doc}, upsert=True
         )

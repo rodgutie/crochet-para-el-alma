@@ -22,6 +22,7 @@ def _doc_to_out(doc: dict) -> HeroSlideOut:
         cta_link=doc.get("cta_link", ""),
         active=doc.get("active", True),
         focal_point=doc.get("focal_point", "center"),
+        focal_x=doc.get("focal_x", "center"),
         eyebrow=doc.get("eyebrow", ""),
         image_side=doc.get("image_side", "auto"),
         accent=doc.get("accent", "none"),

@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const FOCAL_POSITION = {
-  top: 'center top',
-  center: 'center center',
-  bottom: 'center bottom',
-}
+const FOCAL_Y = { top: 'top', center: 'center', bottom: 'bottom' }
+const FOCAL_X = { left: 'left', center: 'center', right: 'right' }
 
 const AUTOPLAY_MS = 7000
 const SWIPE_PX = 40
@@ -70,7 +67,7 @@ export default function HeroCarousel({ slides = [] }) {
   const side =
     slide.image_side && slide.image_side !== 'auto' ? slide.image_side : current % 2 === 0 ? 'right' : 'left'
   const accent = slide.accent === 'navidad' ? ' hero2--navidad' : ''
-  const objectPosition = FOCAL_POSITION[slide.focal_point] || 'center center'
+  const objectPosition = `${FOCAL_X[slide.focal_x] || 'center'} ${FOCAL_Y[slide.focal_point] || 'center'}`
   const external = /^https?:\/\//i.test(slide.cta_link || '')
 
   function onTouchStart(e) {

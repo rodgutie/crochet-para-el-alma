@@ -41,6 +41,7 @@ class HeroSlideIn(BaseModel):
     cta_link: Optional[str] = ""
     active: bool = True
     focal_point: Literal["top", "center", "bottom"] = "center"
+    focal_x: Literal["left", "center", "right"] = "center"
     eyebrow: Optional[str] = ""
     image_side: Literal["left", "right", "auto"] = "auto"
     accent: Literal["none", "navidad"] = "none"

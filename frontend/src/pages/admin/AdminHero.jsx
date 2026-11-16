@@ -11,6 +11,7 @@ const EMPTY_SLIDE = {
   cta_link: '',
   active: true,
   focal_point: 'center',
+  focal_x: 'center',
   eyebrow: '',
   image_side: 'auto',
   accent: 'none',
@@ -207,6 +208,19 @@ function SlideEditorModal({ slide, onCancel, onSave }) {
               <option value="top">Arriba</option>
               <option value="center">Centro</option>
               <option value="bottom">Abajo</option>
+            </select>
+          </label>
+
+          <label style={labelStyle}>
+            Posición horizontal de la imagen
+            <select
+              value={form.focal_x || 'center'}
+              onChange={(e) => update('focal_x', e.target.value)}
+              style={{ ...inputStyle, cursor: 'pointer' }}
+            >
+              <option value="left">Izquierda</option>
+              <option value="center">Centro</option>
+              <option value="right">Derecha</option>
             </select>
           </label>
 

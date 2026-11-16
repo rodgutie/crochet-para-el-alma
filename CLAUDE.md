@@ -88,6 +88,11 @@ The public layout wraps pages in `<Navbar> + <Footer>`; admin pages use `AdminLa
 | `CORS_ORIGINS` | Comma-separated allowed frontend origins |
 | `FIRST_ADMIN_EMAIL` | Seeded on first startup |
 | `FIRST_ADMIN_PASSWORD` | Seeded on first startup — change immediately |
+| `R2_ENDPOINT` | `https://<account_id>.r2.cloudflarestorage.com` |
+| `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` | R2 API token (Object Read & Write on both buckets) |
+| `R2_BUCKET_NAME` | PRIVATE bucket — videos / PDFs |
+| `R2_IMAGES_BUCKET_NAME` | PUBLIC bucket — images uploaded from the admin (hero, products) |
+| `R2_PUBLIC_IMAGES_URL` | Public base URL of the images bucket (custom domain or r2.dev), no trailing slash |
 
 ### Frontend (`.env`)
 | Key | Purpose |

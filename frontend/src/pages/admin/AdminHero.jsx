@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import MediaUpload from '../../components/MediaUpload'
+import SlidePreview from './SlidePreview'
 
 const EMPTY_SLIDE = {
   order: 0,
@@ -132,6 +133,7 @@ export default function AdminHero() {
       {editing && (
         <SlideEditorModal
           slide={editing}
+          position={editing.id ? Math.max(0, slides.findIndex((x) => x.id === editing.id)) : slides.length}
           onCancel={() => setEditing(null)}
           onSave={handleSave}
         />
@@ -140,7 +142,7 @@ export default function AdminHero() {
   )
 }
 
-function SlideEditorModal({ slide, onCancel, onSave }) {
+function SlideEditorModal({ slide, position, onCancel, onSave }) {
   const [form, setForm] = useState(slide)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState('')
@@ -151,6 +153,10 @@ function SlideEditorModal({ slide, onCancel, onSave }) {
 
   async function handleSubmit() {
     setSaveError('')
+    if (!(form.image_url || '').trim()) {
+      setSaveError('Falta la imagen: sube una o pega su URL.')
+      return
+    }
     setSaving(true)
     try {
       await onSave(form)
@@ -167,13 +173,16 @@ function SlideEditorModal({ slide, onCancel, onSave }) {
         position: 'fixed',
         inset: 0,
         background: 'rgba(43,29,20,0.45)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        overflowY: 'auto',
+        padding: 16,
         zIndex: 100,
       }}
     >
-      <div style={{ background: 'var(--cream)', borderRadius: 'var(--radius-card)', padding: 32, width: 460 }}>
+      <div
+        className="slide-editor"
+        style={{ background: 'var(--cream)', borderRadius: 'var(--radius-card)', margin: '0 auto' }}
+      >
+        <div className="slide-editor-form">
         <h2 style={{ fontSize: '1.2rem' }}>{slide.id ? 'Editar imagen' : 'Nueva imagen del banner'}</h2>
 
         <div style={{ marginTop: 20, display: 'grid', gap: 12 }}>
@@ -280,15 +289,25 @@ function SlideEditorModal({ slide, onCancel, onSave }) {
           </label>
         </div>
 
-        {saveError && (
-          <p style={{ color: '#b3261e', fontSize: '0.85rem', marginTop: 16 }}>{saveError}</p>
-        )}
+        <div className="slide-editor-footer">
+          {saveError && (
+            <p role="alert" style={{ color: '#b3261e', fontSize: '0.85rem', margin: '0 0 10px' }}>{saveError}</p>
+          )}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+            <button onClick={onCancel} className="btn-outline" disabled={saving}>Cancelar</button>
+            <button onClick={handleSubmit} className="btn-primary" disabled={saving}>
+              {saving ? 'Guardando…' : 'Guardar'}
+            </button>
+          </div>
+        </div>
+        </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 16 }}>
-          <button onClick={onCancel} className="btn-outline" disabled={saving}>Cancelar</button>
-          <button onClick={handleSubmit} className="btn-primary" disabled={saving}>
-            {saving ? 'Guardando…' : 'Guardar'}
-          </button>
+        <div className="slide-editor-preview">
+          <p className="eyebrow" style={{ marginBottom: 10 }}>Vista previa en el sitio</p>
+          <SlidePreview slide={form} position={position} />
+          <p style={{ fontSize: '0.78rem', marginTop: 10, opacity: 0.75 }}>
+            Así se verá la diapositiva en la portada. Se actualiza mientras escribes.
+          </p>
         </div>
       </div>
     </div>

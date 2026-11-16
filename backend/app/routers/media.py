@@ -5,13 +5,17 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from botocore.exceptions import ClientError
-from fastapi import APIRouter, Depends, File, HTTPException, Query, Request, UploadFile
+import logging
+
+from botocore.exceptions import ClientError, ConnectTimeoutError, EndpointConnectionError, ReadTimeoutError
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from fastapi.responses import StreamingResponse
 
 from app.config import settings
 from app.deps import require_admin
 from app.r2 import get_r2_client
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/media", tags=["media"])
 images_router = APIRouter(prefix="/api/images", tags=["images"])
@@ -98,60 +102,92 @@ async def serve_media(path: str):
 # Public images — separate bucket/prefix with direct Cloudflare CDN URLs
 # ---------------------------------------------------------------------------
 
+MAX_IMAGE_BYTES = 10 * 1024 * 1024  # 10 MB
+ALLOWED_IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"}
+
+
+def _r2_error_message(exc: Exception) -> str:
+    """Plain-Spanish explanation of why an R2 call failed (shown in the admin)."""
+    if isinstance(exc, ClientError):
+        code = exc.response.get("Error", {}).get("Code", "")
+        if code in ("NoSuchBucket",):
+            return "El bucket de imágenes no existe en Cloudflare R2. Revisa R2_IMAGES_BUCKET_NAME en Railway."
+        if code in ("AccessDenied", "InvalidAccessKeyId", "SignatureDoesNotMatch", "Unauthorized", "403"):
+            return (
+                "Cloudflare R2 rechazó las credenciales o no tienen permiso de escritura en el bucket de "
+                "imágenes. Revisa R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY y que el token tenga permiso "
+                "«Object Read & Write» sobre ese bucket."
+            )
+        return f"Cloudflare R2 devolvió un error ({code or 'desconocido'}) al guardar la imagen."
+    if isinstance(exc, (EndpointConnectionError, ConnectTimeoutError, ReadTimeoutError)):
+        return "No se pudo conectar con Cloudflare R2. Revisa R2_ENDPOINT en Railway."
+    return "Ocurrió un error inesperado al subir la imagen. Inténtalo de nuevo."
+
+
 @images_router.post("/upload", dependencies=[Depends(require_admin)])
 async def upload_image(
-    request: Request,
     file: UploadFile = File(...),
-    folder: str = Query("products", description="Subfolder: hero | products"),
+    folder: str = Query("products", pattern="^[a-z0-9_-]{1,32}$", description="Subfolder: hero | products"),
 ):
     """
-    Uploads an image to the public R2 images bucket and returns its direct
-    public URL.  If R2_PUBLIC_IMAGES_URL is not yet configured it falls back
-    to serving through the backend proxy so local dev always works.
-    """
-    if not (file.content_type or "").startswith("image/"):
-        raise HTTPException(status_code=400, detail="Solo se permiten archivos de imagen")
+    Uploads an image to the PUBLIC R2 images bucket (separate from the private
+    video/PDF bucket) and returns its public URL: {"url": "..."}.
 
-    ext = Path(file.filename or "image.jpg").suffix.lower() or ".jpg"
+    Every failure is raised as an HTTPException so the response is JSON that
+    passes through the CORS middleware — an uncaught exception would produce a
+    CORS-less 500 that browsers report only as "Failed to fetch".
+    """
+    if not (settings.r2_images_bucket_name and settings.r2_public_images_url and settings.r2_endpoint
+            and settings.r2_access_key_id and settings.r2_secret_access_key):
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "La subida de imágenes todavía no está configurada en el servidor. Faltan variables de R2 en "
+                "Railway (R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_IMAGES_BUCKET_NAME, "
+                "R2_PUBLIC_IMAGES_URL). Mientras tanto puedes pegar la URL de la imagen a mano."
+            ),
+        )
+
+    ext = Path(file.filename or "").suffix.lower()
+    if not (file.content_type or "").startswith("image/") or ext not in ALLOWED_IMAGE_EXTS:
+        raise HTTPException(status_code=400, detail="Solo se permiten imágenes JPG, PNG, WEBP, GIF o AVIF.")
+
     unique_name = f"{uuid.uuid4().hex}{ext}"
     r2_key = f"images/{folder}/{unique_name}"
     content_type = file.content_type or "image/jpeg"
 
-    bucket = settings.r2_images_bucket_name or settings.r2_bucket_name
-
     fd, tmp_path = tempfile.mkstemp(suffix=ext, prefix="img_")
     try:
+        size = 0
         with os.fdopen(fd, "wb") as f:
             while chunk := await file.read(1024 * 1024):
+                size += len(chunk)
+                if size > MAX_IMAGE_BYTES:
+                    raise HTTPException(status_code=413, detail="La imagen pesa más de 10 MB. Reduce su tamaño e inténtalo de nuevo.")
                 f.write(chunk)
 
         def do_upload():
-            r2 = get_r2_client()
-            r2.upload_file(
+            get_r2_client().upload_file(
                 tmp_path,
-                bucket,
+                settings.r2_images_bucket_name,
                 r2_key,
-                ExtraArgs={"ContentType": content_type},
+                ExtraArgs={"ContentType": content_type, "CacheControl": "public, max-age=31536000, immutable"},
             )
 
-        await asyncio.to_thread(do_upload)
+        try:
+            await asyncio.to_thread(do_upload)
+        except HTTPException:
+            raise
+        except Exception as exc:  # noqa: BLE001 - turn every R2 failure into a clear JSON error
+            logger.exception("R2 image upload failed")
+            raise HTTPException(status_code=502, detail=_r2_error_message(exc))
     finally:
         try:
             os.unlink(tmp_path)
         except FileNotFoundError:
             pass
 
-    if settings.r2_public_images_url:
-        # Direct Cloudflare CDN URL — zero backend bandwidth for image delivery
-        url = f"{settings.r2_public_images_url.rstrip('/')}/{r2_key}"
-    else:
-        # Fallback: serve through the backend proxy endpoint below.
-        # Works for local dev; set R2_PUBLIC_IMAGES_URL in production.
-        proto = request.headers.get("x-forwarded-proto", request.url.scheme)
-        host = request.headers.get("x-forwarded-host") or request.headers.get("host", "localhost:8000")
-        url = f"{proto}://{host}/api/images/{folder}/{unique_name}"
-
-    return {"url": url}
+    return {"url": f"{settings.r2_public_images_url.rstrip('/')}/{r2_key}"}
 
 
 @images_router.get("/{path:path}")

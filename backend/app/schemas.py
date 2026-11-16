@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, Literal
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 # ---------- Users / Auth ----------
@@ -32,10 +32,10 @@ class TokenOut(BaseModel):
 
 # ---------- Hero slides ----------
 
-class HeroSlideIn(BaseModel):
+class HeroSlideBase(BaseModel):
     order: int = 0
     image_url: str
-    headline: str
+    headline: str = ""
     subtext: Optional[str] = ""
     cta_text: Optional[str] = ""
     cta_link: Optional[str] = ""
@@ -47,7 +47,36 @@ class HeroSlideIn(BaseModel):
     accent: Literal["none", "navidad"] = "none"
 
 
-class HeroSlideOut(HeroSlideIn):
+
+class HeroSlideIn(HeroSlideBase):
+    """Validated admin input. Output (HeroSlideOut) is deliberately lenient so
+    legacy documents never break the public list."""
+
+    @field_validator("eyebrow", "subtext", "cta_text", "cta_link", "headline", mode="before")
+    @classmethod
+    def _text_defaults(cls, v):
+        # The editor may send null/whitespace for untouched optional fields.
+        return "" if v is None else str(v).strip()
+
+    @field_validator("image_url", mode="before")
+    @classmethod
+    def _image_url_ok(cls, v):
+        v = "" if v is None else str(v).strip()
+        if not v:
+            raise ValueError("Falta la imagen: sube una o pega su URL.")
+        if not (v.startswith("/") or v.lower().startswith(("http://", "https://"))):
+            raise ValueError("La URL de la imagen debe empezar con https:// (o con / para imágenes del sitio).")
+        return v
+
+    @field_validator("cta_link", mode="after")
+    @classmethod
+    def _cta_link_ok(cls, v):
+        if v and not (v.startswith("/") or v.lower().startswith(("http://", "https://"))):
+            raise ValueError("El enlace del botón debe empezar con / (una página del sitio, ej. /tienda) o con https://")
+        return v
+
+
+class HeroSlideOut(HeroSlideBase):
     id: str
 
 

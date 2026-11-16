@@ -464,6 +464,40 @@ button {
   }
 }
 
+/* Admin hero slide editor (form + live preview) */
+.slide-editor {
+  display: grid;
+  grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+  gap: 32px;
+  width: min(1120px, 100%);
+  padding: 28px;
+}
+
+.slide-editor-preview {
+  align-self: start;
+  position: sticky;
+  top: 0;
+  min-width: 0;
+}
+
+.slide-editor-footer {
+  position: sticky;
+  bottom: -28px;
+  margin: 16px -4px -28px;
+  padding: 14px 4px 20px;
+  background: var(--cream);
+}
+
+@media (max-width: 900px) {
+  .slide-editor {
+    grid-template-columns: 1fr;
+    padding: 20px 16px;
+    gap: 24px;
+  }
+  .slide-editor-preview { order: -1; position: static; }
+  .slide-editor-footer { bottom: -20px; margin-bottom: -20px; }
+}
+
 /* Tienda editorial blocks */
 .tienda-block {
   margin-top: 72px;

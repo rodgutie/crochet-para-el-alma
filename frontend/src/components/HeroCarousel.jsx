@@ -21,6 +21,58 @@ function usePrefersReducedMotion() {
   return reduced
 }
 
+/** Section class: image side (forced or alternating by position) + accent. */
+export function heroSectionClass(slide, index) {
+  const side =
+    slide.image_side && slide.image_side !== 'auto' ? slide.image_side : index % 2 === 0 ? 'right' : 'left'
+  const accent = slide.accent === 'navidad' ? ' hero2--navidad' : ''
+  return `hero2 hero2--img-${side}${accent}`
+}
+
+/**
+ * The slide itself (image arch + text). Shared by the live carousel and the
+ * admin editor preview so both always render identically. `controls` is the
+ * optional dots/arrows block, rendered inside the text panel.
+ */
+export function HeroSlide({ slide, controls = null }) {
+  const objectPosition = `${FOCAL_X[slide.focal_x] || 'center'} ${FOCAL_Y[slide.focal_point] || 'center'}`
+  const external = /^https?:\/\//i.test(slide.cta_link || '')
+
+  return (
+    <div className="hero2-slide">
+      <div className="hero2-media">
+        <div className="hero2-arch">
+          {slide.image_url && (
+            <img src={slide.image_url} alt="" style={{ objectPosition, transformOrigin: objectPosition }} />
+          )}
+        </div>
+      </div>
+
+      <div className="hero2-text">
+        {slide.eyebrow && (
+          <p className="eyebrow hero2-eyebrow hero2-reveal" style={{ '--i': 0 }}>{slide.eyebrow}</p>
+        )}
+        <h1 className="font-display hero2-title hero2-reveal" style={{ '--i': 1 }}>{slide.headline}</h1>
+        {slide.subtext && <p className="hero2-sub hero2-reveal" style={{ '--i': 2 }}>{slide.subtext}</p>}
+        {slide.cta_text && (
+          <div className="hero2-reveal hero2-cta-wrap" style={{ '--i': 3 }}>
+            {external ? (
+              <a href={slide.cta_link} target="_blank" rel="noopener noreferrer" className="btn-primary hero2-cta">
+                {slide.cta_text}
+              </a>
+            ) : (
+              <Link to={slide.cta_link || '#'} className="btn-primary hero2-cta">
+                {slide.cta_text}
+              </Link>
+            )}
+          </div>
+        )}
+        {controls}
+      </div>
+    </div>
+  )
+}
+
 /**
  * Editorial split hero. Text panel + arch-shaped image; the image side
  * alternates (or is forced per slide via `image_side`). Driven by the
@@ -64,11 +116,24 @@ export default function HeroCarousel({ slides = [] }) {
 
   const current = Math.min(index, count - 1)
   const slide = slides[current]
-  const side =
-    slide.image_side && slide.image_side !== 'auto' ? slide.image_side : current % 2 === 0 ? 'right' : 'left'
-  const accent = slide.accent === 'navidad' ? ' hero2--navidad' : ''
-  const objectPosition = `${FOCAL_X[slide.focal_x] || 'center'} ${FOCAL_Y[slide.focal_point] || 'center'}`
-  const external = /^https?:\/\//i.test(slide.cta_link || '')
+
+  const controls = (
+    <div className="hero2-controls">
+      <button className="hero2-arrow" onClick={() => goTo(current - 1)} aria-label="Anterior">‹</button>
+      <div className="hero2-dots">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            aria-label={`Ir a la diapositiva ${i + 1}`}
+            aria-current={i === current}
+            className={`hero2-dot${i === current ? ' is-active' : ''}`}
+          />
+        ))}
+      </div>
+      <button className="hero2-arrow" onClick={() => goTo(current + 1)} aria-label="Siguiente">›</button>
+    </div>
+  )
 
   function onTouchStart(e) {
     touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
@@ -84,7 +149,7 @@ export default function HeroCarousel({ slides = [] }) {
 
   return (
     <section
-      className={`hero2 hero2--img-${side}${accent}`}
+      className={heroSectionClass(slide, current)}
       aria-roledescription="carrusel"
       aria-label="Destacados"
       onMouseEnter={() => setPaused(true)}
@@ -95,52 +160,7 @@ export default function HeroCarousel({ slides = [] }) {
       onTouchEnd={onTouchEnd}
     >
       {/* key restarts Ken Burns + text stagger on every slide change */}
-      <div className="hero2-slide" key={`slide-${current}`}>
-        <div className="hero2-media">
-          <div className="hero2-arch">
-            <img src={slide.image_url} alt="" style={{ objectPosition, transformOrigin: objectPosition }} />
-          </div>
-        </div>
-
-        <div className="hero2-text">
-          {slide.eyebrow && (
-            <p className="eyebrow hero2-eyebrow hero2-reveal" style={{ '--i': 0 }}>{slide.eyebrow}</p>
-          )}
-          <h1 className="font-display hero2-title hero2-reveal" style={{ '--i': 1 }}>{slide.headline}</h1>
-          {slide.subtext && <p className="hero2-sub hero2-reveal" style={{ '--i': 2 }}>{slide.subtext}</p>}
-          {slide.cta_text && (
-            <div className="hero2-reveal hero2-cta-wrap" style={{ '--i': 3 }}>
-              {external ? (
-                <a href={slide.cta_link} target="_blank" rel="noopener noreferrer" className="btn-primary hero2-cta">
-                  {slide.cta_text}
-                </a>
-              ) : (
-                <Link to={slide.cta_link || '#'} className="btn-primary hero2-cta">
-                  {slide.cta_text}
-                </Link>
-              )}
-            </div>
-          )}
-
-          {count > 1 && (
-            <div className="hero2-controls">
-              <button className="hero2-arrow" onClick={() => goTo(current - 1)} aria-label="Anterior">‹</button>
-              <div className="hero2-dots">
-                {slides.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => goTo(i)}
-                    aria-label={`Ir a la diapositiva ${i + 1}`}
-                    aria-current={i === current}
-                    className={`hero2-dot${i === current ? ' is-active' : ''}`}
-                  />
-                ))}
-              </div>
-              <button className="hero2-arrow" onClick={() => goTo(current + 1)} aria-label="Siguiente">›</button>
-            </div>
-          )}
-        </div>
-      </div>
+      <HeroSlide key={`slide-${current}`} slide={slide} controls={count > 1 ? controls : null} />
     </section>
   )
 }

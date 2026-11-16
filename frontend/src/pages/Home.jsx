@@ -30,6 +30,11 @@ export default function Home() {
           setHeroReady(true)
         }
 
+        // Warm the cache for the remaining slides so they don't pop in late.
+        data.slice(1).forEach((s) => {
+          if (s.image_url) new Image().src = s.image_url
+        })
+
         const img = new Image()
         img.onload = finish
         img.onerror = finish

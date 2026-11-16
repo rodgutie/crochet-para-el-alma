@@ -11,6 +11,9 @@ const EMPTY_SLIDE = {
   cta_link: '',
   active: true,
   focal_point: 'center',
+  eyebrow: '',
+  image_side: 'auto',
+  accent: 'none',
 }
 
 export default function AdminHero() {
@@ -205,6 +208,36 @@ function SlideEditorModal({ slide, onCancel, onSave }) {
               <option value="center">Centro</option>
               <option value="bottom">Abajo</option>
             </select>
+          </label>
+
+          <label style={labelStyle}>
+            Lado de la imagen
+            <select
+              value={form.image_side || 'auto'}
+              onChange={(e) => update('image_side', e.target.value)}
+              style={{ ...inputStyle, cursor: 'pointer' }}
+            >
+              <option value="auto">Automático (alterna)</option>
+              <option value="left">Izquierda</option>
+              <option value="right">Derecha</option>
+            </select>
+          </label>
+
+          <label style={labelStyle}>
+            Estilo de color
+            <select
+              value={form.accent || 'none'}
+              onChange={(e) => update('accent', e.target.value)}
+              style={{ ...inputStyle, cursor: 'pointer' }}
+            >
+              <option value="none">Normal</option>
+              <option value="navidad">Navidad (rojo y verde suaves)</option>
+            </select>
+          </label>
+
+          <label style={labelStyle}>
+            Etiqueta superior (eyebrow)
+            <input type="text" value={form.eyebrow || ''} onChange={(e) => update('eyebrow', e.target.value)} placeholder="NAVIDAD 2026" style={inputStyle} />
           </label>
 
           <label style={labelStyle}>

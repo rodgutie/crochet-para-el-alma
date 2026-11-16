@@ -1,12 +1,5 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-
-const kenBurnsStyle = `
-@keyframes kenBurns {
-  from { transform: scale(1); }
-  to   { transform: scale(1.08); }
-}
-`
 
 const FOCAL_POSITION = {
   top: 'center top',
@@ -14,40 +7,53 @@ const FOCAL_POSITION = {
   bottom: 'center bottom',
 }
 
+const AUTOPLAY_MS = 7000
+const SWIPE_PX = 40
+
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(
+    () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  )
+  useEffect(() => {
+    const mq = window.matchMedia?.('(prefers-reduced-motion: reduce)')
+    if (!mq) return
+    const onChange = () => setReduced(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return reduced
+}
+
 /**
- * Full-bleed hero carousel, driven entirely by the /api/hero slides
- * the admin dashboard manages. Falls back to a friendly empty state
- * if no slides exist yet (e.g. right after setup, before photos are added).
+ * Editorial split hero. Text panel + arch-shaped image; the image side
+ * alternates (or is forced per slide via `image_side`). Driven by the
+ * /api/hero slides the admin dashboard manages.
  */
 export default function HeroCarousel({ slides = [] }) {
   const [index, setIndex] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const reducedMotion = usePrefersReducedMotion()
+  const touchStart = useRef(null)
+
+  const count = slides.length
 
   const goTo = useCallback(
     (i) => {
-      if (slides.length === 0) return
-      setIndex((i + slides.length) % slides.length)
+      if (count === 0) return
+      setIndex((i + count) % count)
     },
-    [slides.length]
+    [count]
   )
 
   useEffect(() => {
-    if (slides.length < 2) return
-    const timer = setInterval(() => goTo(index + 1), 6000)
-    return () => clearInterval(timer)
-  }, [index, slides.length, goTo])
+    if (count < 2 || paused || reducedMotion) return
+    const timer = setTimeout(() => setIndex((i) => (i + 1) % count), AUTOPLAY_MS)
+    return () => clearTimeout(timer)
+  }, [index, count, paused, reducedMotion])
 
-  if (slides.length === 0) {
+  if (count === 0) {
     return (
-      <section
-        style={{
-          background: 'var(--cream-deep)',
-          minHeight: 420,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-        }}
-      >
+      <section className="hero-empty">
         <div>
           <p className="eyebrow" style={{ marginBottom: 10 }}>Portada</p>
           <h1 style={{ fontSize: '2rem', maxWidth: 560, margin: '0 auto' }}>
@@ -59,122 +65,85 @@ export default function HeroCarousel({ slides = [] }) {
     )
   }
 
-  const slide = slides[index]
+  const current = Math.min(index, count - 1)
+  const slide = slides[current]
+  const side =
+    slide.image_side && slide.image_side !== 'auto' ? slide.image_side : current % 2 === 0 ? 'right' : 'left'
+  const accent = slide.accent === 'navidad' ? ' hero2--navidad' : ''
   const objectPosition = FOCAL_POSITION[slide.focal_point] || 'center center'
+  const external = /^https?:\/\//i.test(slide.cta_link || '')
+
+  function onTouchStart(e) {
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  }
+  function onTouchEnd(e) {
+    const start = touchStart.current
+    touchStart.current = null
+    if (!start) return
+    const dx = e.changedTouches[0].clientX - start.x
+    const dy = e.changedTouches[0].clientY - start.y
+    if (Math.abs(dx) > SWIPE_PX && Math.abs(dx) > Math.abs(dy) * 1.5) goTo(current + (dx < 0 ? 1 : -1))
+  }
 
   return (
     <section
-      className="hero-section"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'var(--cream)',
-      }}
+      className={`hero2 hero2--img-${side}${accent}`}
+      aria-roledescription="carrusel"
+      aria-label="Destacados"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
-      <style>{kenBurnsStyle}</style>
-      <img
-        key={`hero-img-${index}`}
-        src={slide.image_url}
-        alt=""
-        style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          objectPosition,
-          opacity: 0.85,
-          animation: 'kenBurns 9s ease-in-out forwards',
-          transformOrigin: objectPosition,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          background: 'linear-gradient(180deg, rgba(43,29,20,0.15), rgba(43,29,20,0.45))',
-        }}
-      />
-
-      <div style={{ position: 'relative', textAlign: 'center', color: '#fff', padding: '0 24px', maxWidth: 780 }}>
-        <h1
-          className="font-display"
-          style={{ color: '#fff', fontSize: 'clamp(1.35rem, 5vw, 2.75rem)', lineHeight: 1.3 }}
-        >
-          {slide.headline}
-        </h1>
-        {slide.subtext && (
-          <p style={{ color: 'rgba(255,255,255,0.9)', marginTop: 8, fontSize: 'clamp(0.85rem, 3vw, 1.05rem)' }}>{slide.subtext}</p>
-        )}
-        {slide.cta_text && (
-          <Link to={slide.cta_link || '#'} className="btn-primary" style={{ marginTop: 26, display: 'inline-block' }}>
-            {slide.cta_text}
-          </Link>
-        )}
-      </div>
-
-      {slides.length > 1 && (
-        <>
-          <button
-            onClick={() => goTo(index - 1)}
-            aria-label="Anterior"
-            style={carouselArrowStyle('left')}
-          >
-            ‹
-          </button>
-          <button
-            onClick={() => goTo(index + 1)}
-            aria-label="Siguiente"
-            style={carouselArrowStyle('right')}
-          >
-            ›
-          </button>
-
-          <div style={{ position: 'absolute', bottom: 22, display: 'flex', gap: 8, left: '50%', transform: 'translateX(-50%)' }}>
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => goTo(i)}
-                aria-label={`Ir a la diapositiva ${i + 1}`}
-                style={{
-                  width: i === index ? 22 : 8,
-                  height: 8,
-                  borderRadius: 999,
-                  border: 'none',
-                  background: i === index ? '#fff' : 'rgba(255,255,255,0.5)',
-                  transition: 'width 0.2s ease',
-                }}
-              />
-            ))}
+      {/* key restarts Ken Burns + text stagger on every slide change */}
+      <div className="hero2-slide" key={`slide-${current}`}>
+        <div className="hero2-media">
+          <div className="hero2-arch">
+            <img src={slide.image_url} alt="" style={{ objectPosition, transformOrigin: objectPosition }} />
           </div>
-        </>
-      )}
+        </div>
+
+        <div className="hero2-text">
+          {slide.eyebrow && (
+            <p className="eyebrow hero2-eyebrow hero2-reveal" style={{ '--i': 0 }}>{slide.eyebrow}</p>
+          )}
+          <h1 className="font-display hero2-title hero2-reveal" style={{ '--i': 1 }}>{slide.headline}</h1>
+          {slide.subtext && <p className="hero2-sub hero2-reveal" style={{ '--i': 2 }}>{slide.subtext}</p>}
+          {slide.cta_text && (
+            <div className="hero2-reveal hero2-cta-wrap" style={{ '--i': 3 }}>
+              {external ? (
+                <a href={slide.cta_link} target="_blank" rel="noopener noreferrer" className="btn-primary hero2-cta">
+                  {slide.cta_text}
+                </a>
+              ) : (
+                <Link to={slide.cta_link || '#'} className="btn-primary hero2-cta">
+                  {slide.cta_text}
+                </Link>
+              )}
+            </div>
+          )}
+
+          {count > 1 && (
+            <div className="hero2-controls">
+              <button className="hero2-arrow" onClick={() => goTo(current - 1)} aria-label="Anterior">‹</button>
+              <div className="hero2-dots">
+                {slides.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => goTo(i)}
+                    aria-label={`Ir a la diapositiva ${i + 1}`}
+                    aria-current={i === current}
+                    className={`hero2-dot${i === current ? ' is-active' : ''}`}
+                  />
+                ))}
+              </div>
+              <button className="hero2-arrow" onClick={() => goTo(current + 1)} aria-label="Siguiente">›</button>
+            </div>
+          )}
+        </div>
+      </div>
     </section>
   )
-}
-
-function carouselArrowStyle(side) {
-  return {
-    position: 'absolute',
-    top: '50%',
-    [side]: 20,
-    transform: 'translateY(-50%)',
-    width: 40,
-    height: 40,
-    borderRadius: '50%',
-    border: 'none',
-    background: 'rgba(255,255,255,0.85)',
-    color: 'var(--espresso)',
-    fontSize: '1.4rem',
-    lineHeight: '40px',
-    textAlign: 'center',
-    padding: 0,
-  }
 }

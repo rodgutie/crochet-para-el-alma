@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api/client'
+import Reveal from '../components/Reveal'
 
 const TYPE_LABELS = {
   physical: 'Hecho a Mano',
@@ -8,6 +9,37 @@ const TYPE_LABELS = {
 }
 
 const PROMO_IMAGES = ['/images/temp1.jpeg', '/images/temp2.jpeg', '/images/temp3.jpeg']
+
+const NAVIDAD_IMAGES = [
+  ['/images/navidad-gnomos.jpg', 'Gnomos tejidos de Navidad'],
+  ['/images/navidad-monica-gnomos.jpg', 'Mónica con gnomos tejidos'],
+]
+const ACCESORIOS_IMAGES = [
+  ['/images/aretes-rosa-turquesa.jpg', 'Aretes rosa y turquesa'],
+  ['/images/aretes-turquesa.jpg', 'Aretes turquesa'],
+  ['/images/aretes-hojas.jpg', 'Aretes de hojas'],
+]
+const BOLSOS_IMAGES = [
+  ['/images/bolso-flor-aro.jpg', 'Bolso flor con aro'],
+  ['/images/bolso-flor-tijeras.jpg', 'Bolso flor con tijeras'],
+  ['/images/bolso-flor-borla.jpg', 'Bolso flor con borla'],
+]
+
+function VisualBlock({ eyebrow, title, images, layout }) {
+  return (
+    <Reveal as="section" className="tienda-block">
+      <p className="eyebrow">{eyebrow}</p>
+      <h2 className="display-heading" style={{ marginTop: 10 }}>{title}</h2>
+      <div className={layout}>
+        {images.map(([src, alt]) => (
+          <div key={src} className="tienda-img">
+            <img src={src} alt={alt} loading="lazy" />
+          </div>
+        ))}
+      </div>
+    </Reveal>
+  )
+}
 
 export default function Tienda() {
   const [products, setProducts] = useState([])
@@ -52,6 +84,10 @@ export default function Tienda() {
           </div>
         ))}
       </div>
+
+      <VisualBlock eyebrow="Temporada" title="Navidad" images={NAVIDAD_IMAGES} layout="tienda-pair" />
+      <VisualBlock eyebrow="Detalles" title="Accesorios" images={ACCESORIOS_IMAGES} layout="tienda-row" />
+      <VisualBlock eyebrow="Colección flor" title="Bolsos" images={BOLSOS_IMAGES} layout="tienda-row" />
 
       <div className="filter-pills">
         {['all', 'physical', 'digital', 'course'].map((t) => (

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import HeroCarousel from '../components/HeroCarousel'
+import Reveal from '../components/Reveal'
 import { api } from '../api/client'
-
-const MEMBERSHIP_URL = 'https://klouser.app/group/crochet-para-el-alma'
+import { MEMBERSHIP_URL, CAMPAIGN_URL } from '../config/links'
 
 export default function Home() {
   const [slides, setSlides] = useState([])
@@ -56,18 +56,18 @@ export default function Home() {
       {heroReady ? <HeroCarousel slides={slides} /> : <div className="hero-section" />}
 
       {/* Founder bio */}
-      <section className="section">
+      <Reveal as="section" className="section">
         <div className="container grid-halves">
           <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', minHeight: 380 }}>
             <img src="/images/cpa-4.jpg" alt="Mónica" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           </div>
           <div>
             <p className="eyebrow">Hola, soy Mónica</p>
-            <h2 style={{ fontSize: 'clamp(1.25rem, 5vw, 2rem)', marginTop: 10 }}>
+            <h2 className="display-heading" style={{ marginTop: 14 }}>
               Descubrí el crochet de adulta. Hoy ayudo a otras mujeres a descubrir todo lo que son
               capaces de crear.
             </h2>
-            <p style={{ marginTop: 18 }}>
+            <p style={{ marginTop: 24 }}>
               Nunca imaginé que un ovillo de hilo cambiaría mi vida. Empecé aprendiendo paso a paso,
               experimentando y equivocándome muchas veces. Hoy diseño mis propios proyectos y acompaño
               a una comunidad de mujeres que, como yo, encontraron en el crochet una forma de desarrollar
@@ -78,13 +78,13 @@ export default function Home() {
             </a>
           </div>
         </div>
-      </section>
+      </Reveal>
 
       {/* Two feature cards */}
-      <section className="section section-alt">
+      <Reveal as="section" className="section section-alt">
         <div className="container grid-halves-tight">
           <FeatureCard
-            imageSrc="/images/hero-1.jpeg"
+            imageSrc="/images/navidad-gnomos.jpg"
             title="Tienda y cursos online"
             description="Descubre piezas únicas tejidas por mí y cursos online para seguir aprendiendo crochet desde donde estés, a tu propio ritmo."
             linkTo="/tienda"
@@ -98,19 +98,56 @@ export default function Home() {
             linkLabel="Ver clases →"
           />
         </div>
+      </Reveal>
 
-        <div className="container grid-thirds" style={{ marginTop: 64 }}>
+      {/* Campaign */}
+      <Reveal as="section" className="section campaign">
+        <div className="container campaign-grid">
+          <div className="campaign-visual">
+            <div className="campaign-arch">
+              <img src="/images/bolso-flor-aro.jpg" alt="Bolso flor tejido a crochet" loading="lazy" />
+            </div>
+            <div className="campaign-circle">
+              <img src="/images/flor-macro.jpg" alt="Detalle de una flor tejida" loading="lazy" />
+            </div>
+          </div>
+          <div>
+            <p className="eyebrow">Membresía · Bolso flor</p>
+            <h2 className="display-heading" style={{ marginTop: 14 }}>
+              Aprende a tejer el bolso que todas quieren
+            </h2>
+            <ul className="campaign-bullets">
+              <li>Patrón y video tutorial paso a paso, a tu ritmo.</li>
+              <li>Una comunidad que te acompaña y celebra tus avances.</li>
+              <li>Materiales sencillos y técnicas que puedes repetir en nuevos proyectos.</li>
+            </ul>
+            <a
+              href={CAMPAIGN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary btn-big"
+              style={{ marginTop: 36 }}
+            >
+              Quiero unirme
+            </a>
+          </div>
+        </div>
+      </Reveal>
+
+      {/* Value props */}
+      <Reveal as="section" className="section section-alt">
+        <div className="container grid-thirds">
           <ValueProp icon="🌿" title="Aprende sin miedo" description="Descubre nuevas técnicas paso a paso y gana la confianza para crear proyectos que antes parecían imposibles." />
           <ValueProp icon="♡" title="Nunca tejas sola" description="Aquí siempre encontrarás una comunidad que te acompaña, te inspira y celebra contigo cada avance." />
           <ValueProp icon="✧" title="Disfruta el proceso" description="Más que terminar un proyecto, descubrirás el placer de crear con tus manos y dedicarte un momento para ti." />
         </div>
-      </section>
+      </Reveal>
 
       {/* CTA banner */}
-      <section className="section">
+      <Reveal as="section" className="section">
         <div className="container grid-halves">
           <div>
-            <h2 style={{ fontSize: 'clamp(1.15rem, 4.5vw, 1.75rem)' }}>
+            <h2 className="display-heading">
               Un lugar al que siempre querrás volver para seguir creando.
             </h2>
             <p style={{ marginTop: 16 }}>
@@ -122,14 +159,14 @@ export default function Home() {
               Quiero ser parte
             </a>
           </div>
-          <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', minHeight: 300 }}>
-            <img src="/images/amiharry.jpeg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', aspectRatio: '4 / 5', maxHeight: 560 }}>
+            <img src="/images/navidad-monica-guirnalda.jpg" alt="Mónica con una guirnalda tejida" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           </div>
         </div>
-      </section>
+      </Reveal>
 
       {/* Podcast block */}
-      <section className="container" style={{ paddingBottom: 88 }}>
+      <Reveal as="section" className="container" style={{ paddingBottom: 88 }}>
         <div
           style={{
             background: 'var(--espresso)',
@@ -182,7 +219,7 @@ export default function Home() {
             Escuchar
           </a>
         </div>
-      </section>
+      </Reveal>
     </>
   )
 }
@@ -219,29 +256,6 @@ function ValueProp({ icon, title, description }) {
       <div style={{ fontSize: '1.5rem', color: 'var(--clay)' }}>{icon}</div>
       <h3 style={{ fontSize: '1.2rem', marginTop: 14 }}>{title}</h3>
       <p style={{ marginTop: 8, fontSize: '0.92rem' }}>{description}</p>
-    </div>
-  )
-}
-
-
-/** Placeholder for real photos, which will be dropped in once handed over. */
-function PlaceholderImage({ label, dark = false }) {
-  return (
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        minHeight: 260,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: dark ? 'var(--ink-navy)' : 'var(--cream-deep)',
-        color: dark ? 'rgba(255,255,255,0.6)' : 'var(--text-body)',
-        fontSize: '0.8rem',
-        letterSpacing: '0.05em',
-      }}
-    >
-      {label}
     </div>
   )
 }

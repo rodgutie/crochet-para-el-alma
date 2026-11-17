@@ -57,6 +57,7 @@ export default function SlidePreview({ slide, position = 0 }) {
   }, [])
 
   const { w, h } = DEVICES[device]
+  const enabled = device === 'mobile' ? slide.show_mobile !== false : slide.show_desktop !== false
   const maxHeight = device === 'mobile' ? 520 : Infinity
   const scale = boxWidth ? Math.min(boxWidth / w, maxHeight / h) : 0
   const shownWidth = w * scale
@@ -113,6 +114,20 @@ export default function SlidePreview({ slide, position = 0 }) {
       </div>
 
       <div ref={boxRef} style={{ width: '100%' }}>
+        {!enabled && (
+          <div
+            style={{
+              padding: '36px 20px',
+              textAlign: 'center',
+              borderRadius: 12,
+              border: '1px dashed var(--border-soft)',
+              background: 'var(--cream-deep)',
+              fontSize: '0.9rem',
+            }}
+          >
+            Esta diapositiva no se muestra en {DEVICES[device].label}
+          </div>
+        )}
         <div
           style={{
             width: shownWidth,
@@ -123,6 +138,7 @@ export default function SlidePreview({ slide, position = 0 }) {
             border: '1px solid var(--border-soft)',
             background: '#fff',
             visibility: scale ? 'visible' : 'hidden',
+            display: enabled ? 'block' : 'none',
           }}
         >
           <iframe
@@ -143,7 +159,7 @@ export default function SlidePreview({ slide, position = 0 }) {
         </div>
       </div>
 
-      {mountNode &&
+      {mountNode && enabled &&
         createPortal(
           <section className={heroSectionClass(slide, position)}>
             <HeroSlide slide={slide} />

@@ -26,6 +26,10 @@ def _doc_to_out(doc: dict) -> HeroSlideOut:
         eyebrow=doc.get("eyebrow") or "",
         image_side=doc.get("image_side", "auto"),
         accent=doc.get("accent", "none"),
+        show_desktop=doc.get("show_desktop", True),
+        show_mobile=doc.get("show_mobile", True),
+        image_fit=doc.get("image_fit", "cover"),
+        image_scale=doc.get("image_scale", 100),
     )
 
 

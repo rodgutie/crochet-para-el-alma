@@ -188,9 +188,24 @@ button {
 .hero2-arch img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: var(--hero-fit, cover);
   display: block;
+  position: relative;
+  transform: scale(var(--hero-scale, 1));
   animation: kenBurns 10s ease-in-out forwards;
+}
+
+/* blurred, enlarged copy of the photo: fills the space a "contain" or
+   zoomed-out image leaves empty, so there are never bare bars */
+.hero2-arch .hero2-arch-bg {
+  animation: none;
+  position: absolute;
+  inset: -40px;
+  width: calc(100% + 80px);
+  height: calc(100% + 80px);
+  object-fit: cover;
+  filter: blur(28px) saturate(1.1);
+  transform: scale(1.1);
 }
 
 /* soft scrim: strong behind the text side, fading out across the photo */
@@ -328,8 +343,8 @@ button {
 }
 
 @keyframes kenBurns {
-  from { transform: scale(1); }
-  to { transform: scale(1.08); }
+  from { transform: scale(var(--hero-scale, 1)); }
+  to { transform: scale(calc(var(--hero-scale, 1) * 1.08)); }
 }
 
 @keyframes heroUp {
@@ -839,6 +854,9 @@ textarea:focus-visible {
   }
   .hero2-arch img {
     animation: none !important;
+  }
+  .hero2-arch .hero2-img {
+    transform: scale(var(--hero-scale, 1)) !important;
   }
   .reveal {
     opacity: 1;

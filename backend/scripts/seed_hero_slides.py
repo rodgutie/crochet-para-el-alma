@@ -63,7 +63,16 @@ SLIDES = [
 
 async def main(replace: bool) -> None:
     for slide in SLIDES:
-        doc = {"focal_point": "center", "focal_x": "center", **slide, "active": True}
+        doc = {
+            "focal_point": "center",
+            "focal_x": "center",
+            "show_desktop": True,
+            "show_mobile": True,
+            "image_fit": "cover",
+            "image_scale": 100,
+            **slide,
+            "active": True,
+        }
         res = await hero_slides_collection.update_one(
             {"image_url": slide["image_url"]}, {"$set": doc}, upsert=True
         )

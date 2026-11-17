@@ -16,6 +16,24 @@ const EMPTY_SLIDE = {
   eyebrow: '',
   image_side: 'auto',
   accent: 'none',
+  show_desktop: true,
+  show_mobile: true,
+  image_fit: 'cover',
+  image_scale: 100,
+}
+
+function deviceLabel(slide) {
+  const d = slide.show_desktop !== false
+  const m = slide.show_mobile !== false
+  return d && m ? 'Ambos' : d ? 'Escritorio' : 'Móvil'
+}
+
+function sizeHint(form) {
+  const d = form.show_desktop !== false
+  const m = form.show_mobile !== false
+  if (d && m) return 'Usa una imagen que se vea bien en ambos, o crea dos diapositivas, una para cada dispositivo'
+  if (d) return 'Tamaño recomendado: 2400 × 1000 px (horizontal)'
+  return 'Tamaño recomendado: 1080 × 1620 px (vertical)'
 }
 
 export default function AdminHero() {
@@ -60,6 +78,11 @@ export default function AdminHero() {
     }
   }
 
+  const activeSlides = slides.filter((s) => s.active)
+  const missing = []
+  if (!activeSlides.some((s) => s.show_desktop !== false)) missing.push('Escritorio')
+  if (!activeSlides.some((s) => s.show_mobile !== false)) missing.push('Móvil')
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -73,6 +96,24 @@ export default function AdminHero() {
       </div>
 
       {loadError && <p style={{ color: '#b3261e', marginTop: 16 }}>{loadError}</p>}
+
+      {!loading && slides.length > 0 && missing.length > 0 && (
+        <div
+          role="alert"
+          style={{
+            marginTop: 20,
+            padding: '12px 16px',
+            borderRadius: 10,
+            background: '#fff4e0',
+            border: '1px solid #e8c27a',
+            color: '#6b4a00',
+            fontSize: '0.88rem',
+          }}
+        >
+          Atención: no hay ninguna diapositiva activa que se vea en {missing.join(' ni en ')}. En{' '}
+          {missing.length > 1 ? 'esos dispositivos' : 'ese dispositivo'} no se mostrará el banner.
+        </div>
+      )}
 
       {loading ? (
         <p style={{ marginTop: 24 }}>Cargando…</p>
@@ -101,7 +142,23 @@ export default function AdminHero() {
                 )}
               </div>
               <div style={{ flex: 1 }}>
-                <p style={{ fontWeight: 500 }}>{slide.headline || '(sin texto)'}</p>
+                <p style={{ fontWeight: 500 }}>
+                  {slide.headline || '(sin texto)'}
+                  <span
+                    style={{
+                      marginLeft: 10,
+                      padding: '2px 9px',
+                      borderRadius: 999,
+                      border: '1px solid var(--border-soft)',
+                      background: 'var(--cream-deep)',
+                      fontSize: '0.7rem',
+                      fontWeight: 500,
+                      verticalAlign: 'middle',
+                    }}
+                  >
+                    {deviceLabel(slide)}
+                  </span>
+                </p>
                 <p style={{ fontSize: '0.85rem', opacity: 0.75 }}>{slide.subtext}</p>
                 {!slide.active && (
                   <span style={{ fontSize: '0.75rem', color: 'var(--clay-deep)' }}>Oculto en el sitio</span>
@@ -143,11 +200,12 @@ export default function AdminHero() {
 }
 
 function SlideEditorModal({ slide, position, onCancel, onSave }) {
-  const [form, setForm] = useState(slide)
+  const [form, setForm] = useState(() => ({ ...EMPTY_SLIDE, ...slide }))
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState('')
 
   function update(field, value) {
+    setSaveError('')
     setForm((f) => ({ ...f, [field]: value }))
   }
 
@@ -155,6 +213,10 @@ function SlideEditorModal({ slide, position, onCancel, onSave }) {
     setSaveError('')
     if (!(form.image_url || '').trim()) {
       setSaveError('Falta la imagen: sube una o pega su URL.')
+      return
+    }
+    if (!form.show_desktop && !form.show_mobile) {
+      setSaveError('Selecciona al menos Móvil o Escritorio')
       return
     }
     setSaving(true)
@@ -195,6 +257,31 @@ function SlideEditorModal({ slide, position, onCancel, onSave }) {
               label="Subir imagen"
               previewHeight={110}
             />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 18px', marginTop: 4 }}>
+              <label style={checkStyle}>
+                <input
+                  type="checkbox"
+                  checked={!!form.show_desktop}
+                  onChange={(e) => update('show_desktop', e.target.checked)}
+                />
+                Mostrar en Escritorio
+              </label>
+              <label style={checkStyle}>
+                <input
+                  type="checkbox"
+                  checked={!!form.show_mobile}
+                  onChange={(e) => update('show_mobile', e.target.checked)}
+                />
+                Mostrar en Móvil
+              </label>
+            </div>
+            {!form.show_desktop && !form.show_mobile ? (
+              <p role="alert" style={{ color: '#b3261e', fontSize: '0.8rem', fontWeight: 400, margin: 0 }}>
+                Selecciona al menos Móvil o Escritorio
+              </p>
+            ) : (
+              <p style={{ fontSize: '0.8rem', fontWeight: 400, opacity: 0.8, margin: 0 }}>{sizeHint(form)}</p>
+            )}
             <label style={{ ...labelStyle, marginTop: 6 }}>
               URL de imagen (alternativa)
               <input
@@ -205,6 +292,44 @@ function SlideEditorModal({ slide, position, onCancel, onSave }) {
                 style={inputStyle}
               />
             </label>
+          </div>
+
+          <label style={labelStyle}>
+            Ajuste de la imagen
+            <select
+              value={form.image_fit || 'cover'}
+              onChange={(e) => update('image_fit', e.target.value)}
+              style={{ ...inputStyle, cursor: 'pointer' }}
+            >
+              <option value="cover">Llenar (puede recortar)</option>
+              <option value="contain">Mostrar completa (sin recortar)</option>
+            </select>
+          </label>
+
+          <div style={labelStyle}>
+            <label htmlFor="hero-image-scale">Tamaño de la imagen</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <input
+                id="hero-image-scale"
+                type="range"
+                min={50}
+                max={150}
+                step={1}
+                value={form.image_scale ?? 100}
+                onChange={(e) => update('image_scale', Number(e.target.value))}
+                style={{ flex: 1 }}
+              />
+              <span style={{ minWidth: 44, textAlign: 'right', fontWeight: 400 }}>{form.image_scale ?? 100}%</span>
+              <button
+                type="button"
+                className="btn-outline"
+                onClick={() => update('image_scale', 100)}
+                disabled={(form.image_scale ?? 100) === 100}
+                style={{ padding: '6px 14px', fontSize: '0.8rem' }}
+              >
+                Restablecer
+              </button>
+            </div>
           </div>
 
           <label style={labelStyle}>
@@ -314,6 +439,7 @@ function SlideEditorModal({ slide, position, onCancel, onSave }) {
   )
 }
 
+const checkStyle = { display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.88rem', fontWeight: 400 }
 const labelStyle = { display: 'grid', gap: 6, fontSize: '0.85rem', fontWeight: 500 }
 const inputStyle = {
   padding: '10px 14px',

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import HeroCarousel from '../components/HeroCarousel'
+import HeroCarousel, { isMobileViewport, slideVisibleOn } from '../components/HeroCarousel'
 import Reveal from '../components/Reveal'
 import { api } from '../api/client'
 import { MEMBERSHIP_URL, CAMPAIGN_URL } from '../config/links'
@@ -17,7 +17,9 @@ export default function Home() {
         if (cancelled) return
         setSlides(data)
 
-        const firstImage = data[0]?.image_url
+        // Only slides for this device count; preload the first of those.
+        const visible = data.filter((s) => slideVisibleOn(s, isMobileViewport()))
+        const firstImage = visible[0]?.image_url
         if (!firstImage) {
           setHeroReady(true)
           return
@@ -31,7 +33,7 @@ export default function Home() {
         }
 
         // Warm the cache for the remaining slides so they don't pop in late.
-        data.slice(1).forEach((s) => {
+        visible.slice(1).forEach((s) => {
           if (s.image_url) new Image().src = s.image_url
         })
 

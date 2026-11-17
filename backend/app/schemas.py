@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, Literal
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
 
 # ---------- Users / Auth ----------
@@ -45,6 +45,10 @@ class HeroSlideBase(BaseModel):
     eyebrow: Optional[str] = ""
     image_side: Literal["left", "right", "auto"] = "auto"
     accent: Literal["none", "navidad"] = "none"
+    show_desktop: bool = True
+    show_mobile: bool = True
+    image_fit: Literal["cover", "contain"] = "cover"
+    image_scale: int = Field(default=100, ge=50, le=150)
 
 
 
@@ -67,6 +71,12 @@ class HeroSlideIn(HeroSlideBase):
         if not (v.startswith("/") or v.lower().startswith(("http://", "https://"))):
             raise ValueError("La URL de la imagen debe empezar con https:// (o con / para imágenes del sitio).")
         return v
+
+    @model_validator(mode="after")
+    def _at_least_one_device(self):
+        if not (self.show_desktop or self.show_mobile):
+            raise ValueError("Selecciona al menos Móvil o Escritorio")
+        return self
 
     @field_validator("cta_link", mode="after")
     @classmethod

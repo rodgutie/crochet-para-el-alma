@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const FOCAL_Y = { top: 'top', center: 'center', bottom: 'bottom' }
@@ -21,6 +21,32 @@ function usePrefersReducedMotion() {
   return reduced
 }
 
+const MOBILE_QUERY = '(max-width: 767px)'
+
+/** True when the viewport is in the "Móvil" range. */
+export function isMobileViewport() {
+  return typeof window !== 'undefined' && !!window.matchMedia?.(MOBILE_QUERY).matches
+}
+
+/** Legacy slides without the flags count as visible on both devices. */
+export function slideVisibleOn(slide, mobile) {
+  return mobile ? slide.show_mobile !== false : slide.show_desktop !== false
+}
+
+/** Re-evaluates when the window crosses the mobile breakpoint (resize/rotate). */
+export function useIsMobile() {
+  const [mobile, setMobile] = useState(isMobileViewport)
+  useEffect(() => {
+    const mq = window.matchMedia?.(MOBILE_QUERY)
+    if (!mq) return
+    const onChange = () => setMobile(mq.matches)
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return mobile
+}
+
 /** Section class: image side (forced or alternating by position) + accent. */
 export function heroSectionClass(slide, index) {
   const side =
@@ -37,13 +63,24 @@ export function heroSectionClass(slide, index) {
 export function HeroSlide({ slide, controls = null }) {
   const objectPosition = `${FOCAL_X[slide.focal_x] || 'center'} ${FOCAL_Y[slide.focal_point] || 'center'}`
   const external = /^https?:\/\//i.test(slide.cta_link || '')
+  const fit = slide.image_fit === 'contain' ? 'contain' : 'cover'
+  const scale = Math.min(150, Math.max(50, Number(slide.image_scale) || 100))
+  const archStyle = { '--hero-fit': fit, '--hero-scale': scale / 100 }
 
   return (
     <div className="hero2-slide">
       <div className="hero2-media">
-        <div className="hero2-arch">
+        <div className="hero2-arch" style={archStyle}>
+          {slide.image_url && (fit === 'contain' || scale < 100) && (
+            <img src={slide.image_url} alt="" aria-hidden="true" className="hero2-arch-bg" />
+          )}
           {slide.image_url && (
-            <img src={slide.image_url} alt="" style={{ objectPosition, transformOrigin: objectPosition }} />
+            <img
+              src={slide.image_url}
+              alt=""
+              className="hero2-img"
+              style={{ objectPosition, transformOrigin: objectPosition }}
+            />
           )}
         </div>
       </div>
@@ -78,13 +115,18 @@ export function HeroSlide({ slide, controls = null }) {
  * alternates (or is forced per slide via `image_side`). Driven by the
  * /api/hero slides the admin dashboard manages.
  */
-export default function HeroCarousel({ slides = [] }) {
+export default function HeroCarousel({ slides: allSlides = [] }) {
+  const mobile = useIsMobile()
+  const slides = useMemo(() => allSlides.filter((s) => slideVisibleOn(s, mobile)), [allSlides, mobile])
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const reducedMotion = usePrefersReducedMotion()
   const touchStart = useRef(null)
 
   const count = slides.length
+
+  // Back to the first slide whenever the device changes.
+  useEffect(() => setIndex(0), [mobile])
 
   const goTo = useCallback(
     (i) => {
@@ -100,19 +142,8 @@ export default function HeroCarousel({ slides = [] }) {
     return () => clearTimeout(timer)
   }, [index, count, paused, reducedMotion])
 
-  if (count === 0) {
-    return (
-      <section className="hero-empty">
-        <div>
-          <p className="eyebrow" style={{ marginBottom: 10 }}>Portada</p>
-          <h1 style={{ fontSize: '2rem', maxWidth: 560, margin: '0 auto' }}>
-            Todavía no hay imágenes en el banner principal
-          </h1>
-          <p style={{ marginTop: 12 }}>Agrega la primera desde el panel de administración.</p>
-        </div>
-      </section>
-    )
-  }
+  // No visible slides on this device: no hero at all.
+  if (count === 0) return null
 
   const current = Math.min(index, count - 1)
   const slide = slides[current]

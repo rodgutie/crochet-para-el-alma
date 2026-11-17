@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { MOBILE_QUERY } from '../config/breakpoints'
 
 const FOCAL_Y = { top: 'top', center: 'center', bottom: 'bottom' }
 const FOCAL_X = { left: 'left', center: 'center', right: 'right' }
@@ -21,7 +22,6 @@ function usePrefersReducedMotion() {
   return reduced
 }
 
-const MOBILE_QUERY = '(max-width: 767px)'
 
 /** True when the viewport is in the "Móvil" range. */
 export function isMobileViewport() {

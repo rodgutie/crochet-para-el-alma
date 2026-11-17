@@ -27,7 +27,7 @@ export default function Navbar() {
           Crochet <span style={{ fontStyle: 'normal' }}>para el Alma</span>
         </Link>
 
-        {/* Desktop nav — hidden below 768px via CSS */}
+        {/* Desktop nav — hidden on mobile (shared breakpoint) via CSS */}
         <nav className="nav-links">
           {NAV_LINKS.map((link) => (
             <NavLink
@@ -52,7 +52,7 @@ export default function Navbar() {
           </a>
         </nav>
 
-        {/* Desktop actions — hidden below 768px via CSS */}
+        {/* Desktop actions — hidden on mobile (shared breakpoint) via CSS */}
         <div className="nav-actions">
           {user ? (
             <>
@@ -81,7 +81,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Hamburger — visible below 768px via CSS */}
+        {/* Hamburger — visible on mobile (shared breakpoint) via CSS */}
         <button
           className="nav-hamburger"
           onClick={() => setMenuOpen(!menuOpen)}

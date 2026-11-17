@@ -357,7 +357,7 @@ button {
   to { opacity: 1; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: __MOBILE_MAX__px) {
   .hero-section,
   .hero2-slide {
     min-height: max(520px, 70svh);
@@ -500,7 +500,7 @@ button {
   font-size: 1.05rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: __MOBILE_MAX__px) {
   .campaign-grid {
     grid-template-columns: 1fr;
     gap: 40px;
@@ -584,7 +584,7 @@ button {
   height: auto;
 }
 
-@media (max-width: 768px) {
+@media (max-width: __MOBILE_MAX__px) {
   .tienda-block { margin-top: 52px; }
   .tienda-pair { grid-template-columns: 1fr; }
   .tienda-row {
@@ -771,9 +771,9 @@ button {
 }
 
 /* =============================================
-   Breakpoint: mobile ≤ 768px
+   Breakpoint: mobile < 768px (shared constant, src/config/breakpoints.js)
    ============================================= */
-@media (max-width: 768px) {
+@media (max-width: __MOBILE_MAX__px) {
   /* Navbar */
   .nav-links,
   .nav-actions {
